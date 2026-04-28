@@ -16,15 +16,15 @@ export function Navigation() {
   const pathname = usePathname();
   const { items, setIsOpen: openCart } = useCart();
 
- 
   const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
+  // Arreglo de navegación dinámico según el idioma
   const navLinks = [
-    { name: "Inicio", href: `/${locale}` },
-    { name: "Agencia", href: `/${locale}/about` },
-    { name: "Estrategias", href: `/${locale}/services` },
-    { name: "Personalizado", href: `/${locale}/pricing` },
-    { name: "Contacto", href: `/${locale}/contact` },
+    { name: locale === 'es' ? "Inicio" : "Home", href: `/${locale}` },
+    { name: locale === 'es' ? "Agencia" : "Agency", href: `/${locale}/about` },
+    { name: locale === 'es' ? "Estrategias" : "Strategies", href: `/${locale}/services` },
+    { name: locale === 'es' ? "Personalizado" : "Custom", href: `/${locale}/pricing` },
+    { name: locale === 'es' ? "Contacto" : "Contact", href: `/${locale}/contact` },
   ];
 
   useEffect(() => {
@@ -52,13 +52,12 @@ export function Navigation() {
               <div className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 <Image
                   src="/logo.png" 
-                  alt="MR Logo"
+                  alt="Ninja Creatives Logo"
                   fill
                   className="object-contain"
                   priority 
                 />
               </div>
-
             </Link>
 
             {/* Desktop Navigation */}
@@ -97,6 +96,7 @@ export function Navigation() {
               <button
                 onClick={() => openCart(true)}
                 className="relative p-2 text-[var(--cream)]/80 hover:text-[var(--cream)] transition-colors"
+                title={locale === 'es' ? "Abrir carrito" : "Open cart"}
               >
                 <ShoppingBag className="w-6 h-6" />
                 {cartCount > 0 && (
@@ -111,6 +111,7 @@ export function Navigation() {
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden relative w-10 h-10 flex items-center justify-center"
+                aria-label={locale === 'es' ? "Menú principal" : "Main menu"}
               >
                 <div className="flex flex-col gap-1.5">
                   <motion.span
@@ -158,7 +159,6 @@ export function Navigation() {
                   </Link>
                 </motion.div>
               ))}
-
             </div>
           </motion.div>
         )}

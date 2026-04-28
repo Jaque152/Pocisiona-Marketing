@@ -1,7 +1,5 @@
-import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Usamos Service Role para poder insertar sin restricciones de RLS en el backend
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -10,14 +8,10 @@ const supabase = createClient(
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
 const DEEPL_URL = "https://api-free.deepl.com/v2/translate";
 
-export async function POST(req: Request) {
-  let text = ""; 
+export async function getTranslation(text: string, targetLang: string): Promise<string> {
+  if (!text || targetLang === 'es') return text;
+
   try {
-    const { text: rawText, targetLang } = await req.json();
-    text = rawText;
-
-    if (targetLang === 'es') return NextResponse.json({ translated: text });
-
     // 1. Buscar en Caché (Supabase)
     const { data: existing } = await supabase
       .from('translations')
@@ -26,9 +20,9 @@ export async function POST(req: Request) {
       .eq('lang', targetLang)
       .single();
 
-    if (existing) return NextResponse.json({ translated: existing.translated_text });
+    if (existing) return existing.translated_text;
 
-    // 2. Llamada a DeepL 
+    // 2. Si no existe, llamar a DeepL
     const response = await fetch(DEEPL_URL, {
       method: 'POST',
       headers: { 
@@ -47,16 +41,18 @@ export async function POST(req: Request) {
 
     const translatedText = data.translations[0].text;
 
-    // 3. Guardar en Supabase para persistencia
-    await supabase.from('translations').insert({
+    // 3. Guardar en Supabase para futuras consultas (Fire and forget, sin await para no bloquear)
+    supabase.from('translations').insert({
       key_text: text,
       lang: targetLang,
       translated_text: translatedText
+    }).then(({ error }) => {
+      if (error) console.error("Error guardando caché de traducción:", error);
     });
 
-    return NextResponse.json({ translated: translatedText });
+    return translatedText;
   } catch (error) {
-    console.error("Error i18n:", error);
-    return NextResponse.json({ translated: text }, { status: 500 });
+    console.error("Error en getTranslation:", error);
+    return text; // Fallback: devolvemos el texto original si algo falla
   }
 }

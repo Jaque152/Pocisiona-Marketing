@@ -18,7 +18,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Marketing Resultados - Creative Marketing Agency",
+  title: "Marketing Resultados ",
   description: "A marketing agency focused on helping businesses grow with disruptive communication, strategic events, and targeted strategies.",
   icons: {
     icon: "/favicon.ico",

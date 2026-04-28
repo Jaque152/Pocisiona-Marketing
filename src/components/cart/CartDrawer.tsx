@@ -27,7 +27,7 @@ export function CartDrawer() {
       <div className="relative w-full max-w-md bg-card border-l border-border h-full shadow-2xl animate-in slide-in-from-right duration-500 flex flex-col bg-grain">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <h2 className="text-2xl font-serif text-foreground flex items-center gap-3">
-            <ShoppingBag className="text-primary w-6 h-6" /> Tu Carrito
+            <ShoppingBag className="text-primary w-6 h-6" /> {locale === 'es' ? 'Tu Carrito' : 'Your Cart'}
           </h2>
           <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
             <X className="w-6 h-6" />
@@ -40,7 +40,9 @@ export function CartDrawer() {
               <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center text-muted-foreground">
                 <ShoppingBag className="w-10 h-10" />
               </div>
-              <p className="text-muted-foreground font-sans">Aún no has seleccionado ninguna estrategia.</p>
+              <p className="text-muted-foreground font-sans">
+                {locale === 'es' ? 'Aún no has seleccionado ninguna estrategia.' : 'You haven\'t selected any strategy yet.'}
+              </p>
             </div>
           ) : (
             items.map((item) => <CartItemComponent key={item.id} item={item} />)
@@ -50,10 +52,14 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="p-8 border-t border-border bg-card/50 backdrop-blur-md">
             <div className="flex justify-between items-end mb-8 font-sans">
-              <span className="text-muted-foreground text-sm uppercase tracking-widest">Total de Inversión</span>
+              <span className="text-muted-foreground text-sm uppercase tracking-widest">
+                {locale === 'es' ? 'Total de Inversión' : 'Total Investment'}
+              </span>
               <div className="text-right">
                 <span className="text-3xl font-bold text-gradient block">{formatPrice(total)}</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">IVA del 16% Incluido</span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
+                  {locale === 'es' ? 'IVA del 16% Incluido' : '16% VAT Included'}
+                </span>
               </div>
             </div>
             <div className="flex flex-col gap-3 mt-6">
@@ -75,7 +81,7 @@ export function CartDrawer() {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center w-full h-full"
                 >
-                  Continuar al Checkout <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {locale === 'es' ? 'Continuar al Checkout' : 'Proceed to Checkout'} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>

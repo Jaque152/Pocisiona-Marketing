@@ -3,10 +3,25 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
-
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Array de servicios para iterarlos limpiamente en el JSX
+  const services = [
+    {
+      title: "Marketing de Alto Rendimiento",
+      description: "Impulsa tu marca hacia el siguiente nivel. Implementamos soluciones disruptivas diseñadas para que logres destacar y conectar con tu audiencia de manera auténtica y efectiva."
+    },
+    {
+      title: "Comunicación Estratégica",
+      description: "Creamos conexiones que impactan. Potenciamos tu mensaje mediante enfoques creativos que aseguran que tu voz sea escuchada con claridad por el público adecuado."
+    },
+    {
+      title: "Estrategia y Visión de Negocio",
+      description: "Diseñamos la hoja de ruta para tu éxito. Elevamos el valor de tu marca con estrategias innovadoras que garantizan un posicionamiento sólido y un impacto duradero en la industria."
+    }
+  ];
 
   return (
     <section
@@ -26,11 +41,11 @@ export default function About() {
           className="mb-20"
         >
           <span className="text-[#C87941] uppercase tracking-[0.3em] text-sm font-medium">
-            About Us
+            Sobre Nosotros
           </span>
           <h2 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bold text-[#F5F0E8] max-w-3xl leading-tight">
-            A Marketing Agency{" "}
-            <span className="text-gradient">Focused on Your Goals</span>
+            Marketing Recursos{" "}
+            <span className="text-gradient">Elevando el Potencial de tu Negocio</span>
           </h2>
         </motion.div>
 
@@ -43,12 +58,8 @@ export default function About() {
             className="space-y-8"
           >
             <p className="text-xl text-[#F5F0E8]/80 leading-relaxed">
-              Our mission is to provide personalized and high-quality marketing
-              solutions to help businesses grow and stand out in an increasingly
-              competitive market.
+              En <strong className="text-[#E8B86D] font-semibold">Marketing Recursos</strong>, nuestra misión es clara: diseñar soluciones de marketing personalizadas y de alto impacto que permitan a las empresas no solo crecer, sino dominar un mercado en constante evolución.
             </p>
-
-
           </motion.div>
 
           {/* Right Column - Vision */}
@@ -61,36 +72,30 @@ export default function About() {
             <div className="relative">
               <div className="absolute -left-6 top-0 w-1 h-full bg-gradient-to-b from-[#C87941] to-[#E8B86D] rounded-full" />
               <h3 className="text-3xl font-bold text-[#F5F0E8] mb-6">
-                Our Vision
+                Nuestra Visión y Propósito
               </h3>
               <div className="space-y-6 text-[#F5F0E8]/70 leading-relaxed">
                 <p>
-                  At Digital Marketing, our vision is to become the most reliable
-                  and successful marketing agency in the market. We strive to be
-                  industry leaders and be recognized for our creativity,
-                  innovation, and excellence in customer service.
+                  Aspiramos a consolidarnos como el referente de confianza y éxito en el sector. Nos mueve la creatividad estratégica, la innovación constante y una búsqueda incansable de la excelencia en el servicio.
                 </p>
                 <p>
-                  We believe in the importance of collaboration and constant
-                  communication with our clients to ensure their business
-                  objectives are met and exceeded.
+                 Entendemos que el éxito es un trabajo en equipo. Por ello, apostamos por una colaboración estrecha y una comunicación transparente con cada cliente, garantizando que sus objetivos de negocio no solo se alcancen, sino que se superen.
                 </p>
-                <p>
-                  If you're looking for a reliable, creative, and innovative
-                  marketing agency, contact us today!
+                <p className="text-[#F5F0E8] font-medium pt-2">
+                  ¿Buscas resultados reales con un enfoque creativo? Contáctanos hoy mismo y transformemos tu visión en éxito.
                 </p>
               </div>
             </div>
 
             {/* CTA */}
             <motion.a
-              href="#contact"
+              href="/contact"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 mt-8 group"
+              className="inline-flex items-center gap-3 mt-8 group cursor-pointer"
             >
               <span className="text-[#E8B86D] font-medium group-hover:text-[#C87941] transition-colors">
-                Start Your Project
+                Inicia tu Proyecto
               </span>
               <div className="w-10 h-10 rounded-full border border-[#E8B86D] flex items-center justify-center group-hover:bg-[#E8B86D] group-hover:border-[#E8B86D] transition-all duration-300">
                 <svg
@@ -106,11 +111,42 @@ export default function About() {
           </motion.div>
         </div>
 
+        {/* Services Section (Nueva sección integrada) */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-24 pt-20 border-t border-[#C87941]/20"
+        >
+          <h3 className="text-3xl lg:text-4xl font-bold text-[#F5F0E8] mb-12 text-center">
+            Nuestros Servicios Especializados
+          </h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <motion.div 
+                key={index}
+                whileHover={{ y: -8 }}
+                className="bg-[#0F0F1A]/40 p-8 rounded-2xl border border-[#C87941]/20 hover:border-[#C87941]/60 transition-all duration-300 shadow-lg group"
+              >
+                <div className="w-12 h-12 rounded-lg bg-[#C87941]/10 flex items-center justify-center mb-6 group-hover:bg-[#C87941]/20 transition-colors">
+                   <div className="w-6 h-6 bg-gradient-to-br from-[#C87941] to-[#E8B86D] rounded-sm" />
+                </div>
+                <h4 className="text-xl font-bold text-[#E8B86D] mb-4">
+                  {service.title}
+                </h4>
+                <p className="text-[#F5F0E8]/70 leading-relaxed text-sm">
+                  {service.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Image Strip */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-24 relative"
         >
           <div className="grid grid-cols-3 gap-4 h-64 lg:h-80">
