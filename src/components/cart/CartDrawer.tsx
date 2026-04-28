@@ -56,12 +56,29 @@ export function CartDrawer() {
                 <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">IVA del 16% Incluido</span>
               </div>
             </div>
-            
-            <Button asChild className="w-full bg-primary hover:opacity-90 text-primary-foreground h-14 rounded-lg group transition-all">
-              <Link href={`/${locale}/checkout`} onClick={() => setIsOpen(false)}>
-                Continuar al Checkout <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-3 mt-6">
+              {/* BOTÓN VER CARRITO */}
+              <Button asChild className="w-full h-14 rounded-lg font-bold border-2 border-border bg-transparent text-foreground hover:bg-muted transition-all p-0">
+                <Link 
+                  href={`/${locale}/cart`} 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center w-full h-full"
+                >
+                  {locale === 'es' ? 'Ver carrito' : 'View cart'}
+                </Link>
+              </Button>
+
+              {/* BOTÓN CHECKOUT */}
+              <Button asChild className="w-full bg-primary hover:opacity-90 text-primary-foreground h-14 rounded-lg group transition-all p-0">
+                <Link 
+                  href={`/${locale}/checkout`} 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center w-full h-full"
+                >
+                  Continuar al Checkout <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
       </div>

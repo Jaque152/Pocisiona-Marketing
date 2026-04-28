@@ -8,8 +8,6 @@ const supabase = createClient(
 );
 
 const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
-// Si tu cuenta es gratuita usa: https://api-free.deepl.com/v2/translate
-// Si es Pro: https://api.deepl.com/v2/translate
 const DEEPL_URL = "https://api-free.deepl.com/v2/translate";
 
 export async function POST(req: Request) {

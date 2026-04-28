@@ -70,7 +70,7 @@ CREATE TABLE public.checkout_items_nc (
   checkout_id UUID REFERENCES public.checkouts_nc(id),
   plan_id INTEGER REFERENCES public.plans_nc(id),
   quantity INTEGER NOT NULL,
-  unit_price NUMERIC NOT NULL
+  unit_price NUMERIC NOT NULL,
   custom_price NUMERIC,  
   quote_id VARCHAR
 );

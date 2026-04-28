@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { CartItem } from '@/types'; // Confirma que la ruta a tus tipos es correcta
+import { CartItem } from '@/types'; 
 
 interface CartContextType {
   items: CartItem[];
@@ -11,19 +11,36 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   clearCart: () => void;
   total: number;
+  addToCart: (planId: number, quantity?: number, customPrice?: number | null, quoteId?: string | null) => Promise<boolean>;
+  removeFromCart: (cartItemId: number) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+const getSessionId = () => {
+  if (typeof window === 'undefined') return '';
+  let sid = localStorage.getItem('nc_session_id');
+  if (!sid) {
+    sid = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    localStorage.setItem('nc_session_id', sid);
+  }
+  return sid;
+};
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   
   const supabase = createClient();
+
   const refreshCart = useCallback(async () => {
+    const sessionId = getSessionId();
+    if (!sessionId) return;
+
     const { data, error } = await supabase
       .from('cart_items_nc')
       .select('*, plans_nc(*)')
+      .eq('session_id', sessionId) 
       .order('created_at', { ascending: false });
     
     if (error) {
@@ -32,6 +49,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     setItems((data as unknown as CartItem[]) || []);
+  }, [supabase]);
+
+  const addToCart = useCallback(async (planId: number,quantity: number = 1, customPrice: number | null = null, quoteId: string | null = null) => {
+    const sessionId = getSessionId();
+    const numericPlanId = Number(planId);
+    const { data, error } = await supabase
+      .from('cart_items_nc')
+      .insert({
+        session_id: sessionId,
+        plan_id: numericPlanId,
+        quantity: quantity,
+        custom_price: customPrice,
+        quote_id: quoteId
+      })
+      .select('*, plans_nc(*)')
+      .single();
+
+    if (error || !data) {
+      console.error(" Detalle del error BD:", error?.message || error);
+      return false;
+    }
+
+    setItems((prev) => [data as unknown as CartItem, ...prev]);
+    setIsOpen(true);
+    return true;
+  }, [supabase]);
+
+  // --- 2. ELIMINAR DEL CARRITO ---
+  const removeFromCart = useCallback(async (cartItemId: number) => {
+    // 1. Borramos de la BD
+    const { error } = await supabase
+      .from('cart_items_nc')
+      .delete()
+      .eq('id', cartItemId);
+
+    if (error) {
+      console.error("Error al eliminar del carrito:", error);
+      return;
+    }
+
+    // 2. Filtramos el estado local instantáneamente
+    setItems((prev) => prev.filter(item => item.id !== cartItemId));
   }, [supabase]);
 
   const clearCart = useCallback(() => {
@@ -58,8 +117,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsOpen,
     refreshCart,
     clearCart,
-    total
-  }), [items, isOpen, refreshCart, clearCart, total]);
+    total,
+    addToCart,
+    removeFromCart
+  }), [items, isOpen, refreshCart, clearCart, total, addToCart, removeFromCart]);
 
   return (
     <CartContext.Provider value={value}>
@@ -68,7 +129,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Custom Hook
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {

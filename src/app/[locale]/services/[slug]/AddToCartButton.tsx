@@ -1,30 +1,27 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState } from "react";
 import { useCart } from "@/hooks/use-cart";
-import { addToCart } from "@/actions/cart";
 import { Loader2, ShoppingBag } from "lucide-react";
 import { useLocale } from "next-intl";
 
-export function AddToCartButton({ planId }: { planId: number }) {
-  const { refreshCart, setIsOpen } = useCart();
-  const [isPending, startTransition] = useTransition();
-  const locale = useLocale();
+// 1. Tipamos explícitamente el planId
+interface AddToCartButtonProps {
+  planId: number;
+}
 
-  const handleAdd = () => {
-    startTransition(async () => {
-      // 1. Llamamos a la Server Action
-      const res = await addToCart(planId);
-      
-      if (res.success) {
-        // 2. Refrescamos el contexto global
-        await refreshCart();
-        // 3. Abrimos el cajón del carrito
-        setIsOpen(true);
-      } else {
-        alert(res.error || "Hubo un problema al añadir el plan.");
-      }
-    });
+export function AddToCartButton({ planId }: AddToCartButtonProps) {
+  const locale = useLocale();
+  // 2. Solo extraemos addToCart del contexto (el contexto ya maneja el refresh y el isOpen)
+  const { addToCart } = useCart();
+  
+  // 3. Usamos un simple estado para el loading, ya que es una función asíncrona estándar
+  const [isPending, setIsPending] = useState(false);
+
+  const handleAdd = async () => {
+    setIsPending(true);
+    await addToCart(planId);
+    setIsPending(false);
   };
 
   return (

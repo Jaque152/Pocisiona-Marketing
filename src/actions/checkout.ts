@@ -1,47 +1,75 @@
 'use server';
 import { CheckoutPayload, CartItem, Checkout } from '@/types';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js'; 
 import { sendReceiptEmail } from '@/lib/mail';
 
-const ETOMIN_EMAIL = process.env.ETOMIN_EMAIL!;
-const ETOMIN_PASSWORD = process.env.ETOMIN_PASSWORD!;
-const ETOMIN_BASE_URL = 'https://pagos.etomin.com/api/v1';
+function requireEnvVar(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    console.error(`[CRÍTICO] Variable de entorno faltante: ${name}`);
+    throw new Error(`Error de configuración en el servidor.`);
+  }
+  return value;
+}
 
 const getEtominHeaders = (extraHeaders = {}) => ({
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'User-Agent': 'MarketingResultados /1.0',
+  'User-Agent': 'NinjaCreatives/1.0',
   ...extraHeaders
 });
 
 async function safeEtominFetch(url: string, options: RequestInit, stepName: string) {
-  const res = await fetch(url, options);
-  const text = await res.text();
   try {
-    return JSON.parse(text);
-  } catch (e) {
-    throw new Error(`Error en ${stepName}: ${text.slice(0, 50)}`);
+    console.log(`📡 [Etomin] Conectando a: ${url}`);
+    const res = await fetch(url, options);
+    const text = await res.text();
+    
+    if (!res.ok) {
+      console.warn(`⚠️ [Etomin] Código HTTP ${res.status} en ${stepName}`);
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch (parseError) {
+      console.error(`[Etomin API Error - ${stepName}]: El servidor no devolvió JSON. HTTP Status: ${res.status}`);
+      console.error(` Snippet del HTML recibido:\n`, text.substring(0, 300));
+      
+      throw new Error(`Error ${res.status}: La ruta de pago es incorrecta o está bloqueada.`);
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[CRÍTICO - ${stepName}]:`, msg);
+    throw new Error(`Falla de red en: ${stepName}.`);
   }
 }
 
 export async function processCheckout(formData: CheckoutPayload) {
   try {
     const { locale, contactInfo, billingInfo, cardInfo, items, total } = formData;
-    const supabase = await createClient();
+    
+    const supabaseAdmin = createClient(
+      requireEnvVar('NEXT_PUBLIC_SUPABASE_URL'),
+      requireEnvVar('SUPABASE_SERVICE_ROLE_KEY')
+    );
 
-    // 1 & 2. LOGIN Y TOKENIZAR
+    const ETOMIN_BASE_URL = requireEnvVar('ETOMIN_BASE_URL');
+    const ETOMIN_EMAIL = requireEnvVar('ETOMIN_EMAIL');
+    const ETOMIN_PASSWORD = requireEnvVar('ETOMIN_PASSWORD');
+
+    // 1. LOGIN
     const signinData = await safeEtominFetch(`${ETOMIN_BASE_URL}/signin`, {
       method: 'POST',
       headers: getEtominHeaders(),
       body: JSON.stringify({ email: ETOMIN_EMAIL, password: ETOMIN_PASSWORD })
     }, 'Login Etomin');
 
-    if (!signinData.authToken) throw new Error("Falla de autenticación con el procesador.");
-    const authToken = signinData.authToken;
-
+    if (!signinData.authToken) throw new Error("Credenciales del procesador rechazadas.");
+    
+    // 2. TOKENIZAR
     const tokenData = await safeEtominFetch(`${ETOMIN_BASE_URL}/card/tokenizer`, {
       method: 'POST',
-      headers: getEtominHeaders({ 'Authorization': `Bearer ${authToken}` }),
+      headers: getEtominHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
       body: JSON.stringify({
         cardData: {
           cardNumber: cardInfo.number,
@@ -52,12 +80,12 @@ export async function processCheckout(formData: CheckoutPayload) {
       })
     }, 'Tokenización');
 
-    if (!tokenData.cardNumberToken) throw new Error("Tarjeta no válida.");
+    if (!tokenData.cardNumberToken) throw new Error("Tarjeta declinada o inválida.");
 
-    // 3. PROCESAR VENTA
+    // 3. VENTA
     const salePayload = {
       amount: Number(total.toFixed(2)),
-      currency: 484, // MXN
+      currency: 484,
       reference: `NC-${Date.now()}`,
       customerInformation: {
         firstName: contactInfo.firstName,
@@ -84,17 +112,17 @@ export async function processCheckout(formData: CheckoutPayload) {
 
     const saleData = await safeEtominFetch(`${ETOMIN_BASE_URL}/sale`, {
       method: 'POST',
-      headers: getEtominHeaders({ 'Authorization': `Bearer ${authToken}` }),
+      headers: getEtominHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
       body: JSON.stringify(salePayload)
     }, 'Procesar Venta');
 
     if (saleData.status !== 'APPROVED') {
-      throw new Error(saleData.message || "Pago declinado.");
+      throw new Error(saleData.message || "El banco declinó la transacción.");
     }
 
-    // 4. GUARDAR EN BD: checkouts_nc
+    // 4. GUARDAR EN BD
     const subtotalCalc = total / 1.16;
-    const { data: checkoutRecord, error: dbError } = await supabase
+    const { data: checkoutRecord, error: dbError } = await supabaseAdmin
       .from('checkouts_nc')
       .insert({
         session_id: `session_${Date.now()}`, 
@@ -116,9 +144,12 @@ export async function processCheckout(formData: CheckoutPayload) {
       .select()
       .single();
 
-    if (dbError || !checkoutRecord) throw new Error("Error guardando el registro.");
+    if (dbError || !checkoutRecord) {
+      console.error("[CRÍTICO] Detalle del error al insertar Checkout:", dbError);
+      throw new Error("Pago exitoso, pero falló la generación del recibo.");
+    }
 
-    // 5. GUARDAR ITEMS EN checkout_items_nc
+    // 5. GUARDAR ITEMS
     const checkoutItems = items.map((item: CartItem) => ({
       checkout_id: checkoutRecord.id,
       plan_id: item.plan_id,
@@ -128,7 +159,8 @@ export async function processCheckout(formData: CheckoutPayload) {
       quote_id: item.quote_id
     }));
 
-    await supabase.from('checkout_items_nc').insert(checkoutItems);
+    const { error: itemsError } = await supabaseAdmin.from('checkout_items_nc').insert(checkoutItems);
+    if (itemsError) console.error("[CRÍTICO] Detalle del error en Items:", itemsError);
 
     // 6. ENVIAR CORREO
     await sendReceiptEmail(checkoutRecord as Checkout, items, locale === 'en');

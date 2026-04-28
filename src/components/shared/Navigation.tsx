@@ -106,16 +106,6 @@ export function Navigation() {
                 )}
               </button>
 
-              <div className="hidden md:block">
-                <Link
-                  href={`/${locale}/plan-personalizado`}
-                  className="relative overflow-hidden px-6 py-2.5 rounded-full bg-gradient-to-r from-[var(--copper)] to-[var(--amber)] text-[var(--navy)] font-semibold text-sm group inline-block"
-                >
-                  <span className="relative z-10 font-sans">Cotizar Proyecto</span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-                </Link>
-              </div>
-
               {/* Mobile Menu Button */}
               <button
                 type="button"

@@ -1,65 +1,55 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 
-interface CustomPlanData {
+export interface CustomPlanFormData {
   nombre: string;
   apellidos: string;
-  correo_electronico: string;
-  id_cotizacion: string;
-  monto_a_pagar: number;
+  correo_electronico: string; 
+  id_cotizacion: string; // <-- 1. Añadimos el folio aquí
+  monto: number;
 }
 
-export async function processCustomPlan(data: CustomPlanData) {
+export async function processCustomPlan(formData: CustomPlanFormData) {
   try {
     const supabase = await createClient();
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get('session_id')?.value;
 
-    if (!sessionId) return { success: false, error: 'Sesión inválida o expirada.' };
-
-    // Setear el contexto de seguridad en BD
-    await supabase.rpc('set_session_id', { s_id: sessionId });
-
-    // 1. Guardamos el registro EXACTAMENTE como lo pide tu tabla
-    const { error: customError } = await supabase
-      .from('custom_plan_payments_nc')
-      .insert({
-        nombre: data.nombre,
-        apellidos: data.apellidos,
-        correo_electronico: data.correo_electronico,
-        id_cotizacion: data.id_cotizacion,
-        monto_a_pagar: data.monto_a_pagar,
-        payment_status: 'pending' // Valor por default de tu BD
-      });
-
-    if (customError) {
-      console.error("Error en custom_plan_payments_nc:", customError);
-      return { success: false, error: 'No se pudo registrar la cotización.' };
-    }
-
-    // 2. Buscamos el ID del "Plan Personalizado" base que insertamos en SQL (precio 0)
-    const { data: planBase } = await supabase
+    const { data: planData, error: planError } = await supabase
       .from('plans_nc')
       .select('id')
       .eq('slug', 'plan-personalizado')
       .single();
 
-    // 3. Lo inyectamos al carrito para unificar el flujo de pago
-    if (planBase) {
-      await supabase.from('cart_items_nc').insert({
-        session_id: sessionId,
-        plan_id: planBase.id,
-        quantity: 1,
-        custom_price: data.monto_a_pagar, // Sobrescribe el precio 0
-        quote_id: data.id_cotizacion      // Guarda la referencia
-      });
+    if (planError || !planData) {
+      throw new Error("No se encontró la configuración del Plan Personalizado en la base de datos.");
     }
 
-    return { success: true };
-  } catch (error) {
-    console.error(error);
-    return { success: false, error: 'Error interno del servidor.' };
+    // 2. Usamos el folio que escribió el usuario directamente
+    const { error: insertError } = await supabase
+      .from('custom_plan_payments_nc')
+      .insert({
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        correo_electronico: formData.correo_electronico,
+        id_cotizacion: formData.id_cotizacion, 
+        monto_a_pagar: formData.monto,
+        payment_status: 'pending'
+      });
+
+    if (insertError) {
+      console.error("Error al guardar cotización:", insertError);
+      throw new Error("Ocurrió un error al registrar la cotización.");
+    }
+
+    return { 
+      success: true, 
+      planId: planData.id, 
+      quoteId: formData.id_cotizacion, // 3. Devolvemos el mismo folio al carrito
+      customPrice: formData.monto 
+    };
+
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Error inesperado del servidor.";
+    return { success: false, message: errorMessage };
   }
 }
