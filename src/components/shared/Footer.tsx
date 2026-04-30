@@ -26,14 +26,10 @@ export function Footer() {
       { name: locale === 'es' ? "Estrategias Base" : "Base Strategies", href: `/${locale}/services` },
       { name: locale === 'es' ? "Planes a la medida" : "Custom Plans", href: `/${locale}/pricing` },
     ],
-    company: [
-      { name: locale === 'es' ? "Contacto" : "Contact", href: `/${locale}/contact` },
-      { name: locale === 'es' ? "Soporte" : "Support", href: `/${locale}/contact` },
-    ],
     legal: [
       { name: locale === 'es' ? "Aviso de Privacidad" : "Privacy Policy", href: `/${locale}/legal/privacy` },
-      { name: locale === 'es' ? "Términos de Servicio" : "Terms of Service", href: `/${locale}/legal/terms-conditions` },
-      { name: locale === 'es' ? "Política de Cancelación" : "Cancellation Policy", href: `/${locale}/legal/cancellation` },
+      { name: locale === 'es' ? "Términos y Condiciones" : "Terms and Conditions", href: `/${locale}/legal/terms-conditions` },
+      { name: locale === 'es' ? "Política de Devoluciones y Reembolsos" : "Returns and Refunds Policy", href: `/${locale}/legal/cancellation` },
     ],
   };
 
@@ -67,21 +63,6 @@ export function Footer() {
             </h4>
             <ul className="space-y-3">
               {footerLinks.services.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-[var(--cream)]/50 hover:text-[var(--amber)] transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-[var(--cream)] font-serif font-semibold mb-4 text-lg">
-              {locale === 'es' ? 'Empresa' : 'Company'}
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-[var(--cream)]/50 hover:text-[var(--amber)] transition-colors">
                     {link.name}

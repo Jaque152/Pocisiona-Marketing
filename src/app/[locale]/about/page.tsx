@@ -151,41 +151,6 @@ export default function About() {
             ))}
           </div>
         </motion.div>
-        
-        {/* Image Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-24 relative"
-        >
-          <div className="grid grid-cols-3 gap-4 h-64 lg:h-80">
-            <div className="relative rounded-2xl overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop"
-                alt="Team collaboration"
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1A]/80 to-transparent" />
-            </div>
-            <div className="relative rounded-2xl overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
-                alt="Creative process"
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1A]/80 to-transparent" />
-            </div>
-            <div className="relative rounded-2xl overflow-hidden group">
-              <img
-                src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&fit=crop"
-                alt="Strategy meeting"
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F1A]/80 to-transparent" />
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
