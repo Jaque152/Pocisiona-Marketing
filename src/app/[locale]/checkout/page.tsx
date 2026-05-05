@@ -65,25 +65,24 @@ export default function CheckoutContent() {
     setCardInfo({ ...cardInfo, expiry: val });
   };
 
-  const inputClass = "h-14 bg-input border border-border focus-visible:ring-1 focus-visible:ring-ring rounded-lg px-5 text-foreground placeholder:text-muted-foreground transition-all w-full";
+  const inputClass = "h-14 bg-white/50 backdrop-blur-sm border border-white focus-visible:ring-2 focus-visible:ring-[var(--accent-purple)] rounded-xl px-5 text-[var(--text-main)] placeholder:text-[var(--text-main)]/40 font-medium transition-all shadow-sm w-full";
 
   if (showSuccess) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center px-4 relative">
-        <div className="absolute inset-0 bg-grain opacity-20 pointer-events-none" />
-        <div className="max-w-lg w-full text-center bg-card rounded-3xl p-10 md:p-16 border border-border shadow-2xl relative z-10 animate-in fade-in zoom-in duration-500">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle className="w-12 h-12 text-primary" />
+      <main className="min-h-screen bg-mesh flex items-center justify-center px-4 relative">
+        <div className="max-w-lg w-full text-center glass-panel rounded-[2rem] p-10 md:p-16 shadow-2xl relative z-10 animate-in fade-in zoom-in duration-500">
+          <div className="w-24 h-24 bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-magenta)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-[var(--accent-purple)]/30">
+            <CheckCircle className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 text-foreground font-serif tracking-tight">
+          <h1 className="text-4xl font-bold mb-4 text-[var(--text-main)] tracking-tight">
             {isEs ? '¡Estrategia Confirmada!' : 'Strategy Confirmed!'}
           </h1>
-          <p className="text-muted-foreground mb-10 text-lg">
+          <p className="text-[var(--text-main)]/60 mb-10 text-lg font-medium">
             {isEs 
               ? 'Hemos enviado un recibo detallado a tu correo electrónico con los siguientes pasos.' 
               : 'We have sent a detailed receipt to your email with the next steps.'}
           </p>
-          <Button asChild className="w-full bg-primary hover:opacity-90 text-primary-foreground font-bold h-14 rounded-xl transition-all shadow-lg shadow-primary/20">
+          <Button asChild className="w-full bg-[var(--accent-dark)] hover:scale-105 text-white font-bold h-14 rounded-xl transition-all shadow-xl">
             <Link href={`/${locale}/`}>{isEs ? 'Volver al Inicio' : 'Back to Home'}</Link>
           </Button>
         </div>
@@ -92,17 +91,17 @@ export default function CheckoutContent() {
   }
 
   return (
-    <main className="min-h-screen bg-background bg-grain pt-32 pb-24 text-foreground relative">
+    <main className="min-h-screen bg-mesh pt-32 pb-24 text-[var(--text-main)] relative">
       <div className="container mx-auto px-4 max-w-6xl relative z-10">
-        <h1 className="text-4xl md:text-5xl font-bold mb-12 text-gradient">
+        <h1 className="text-4xl md:text-5xl font-bold mb-12 text-gradient-pop tracking-tight">
           {isEs ? 'Finalizar compra' : 'Complete Purchase'}
         </h1>
-        {errorMsg && <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg mb-8">{errorMsg}</div>}
+        {errorMsg && <div className="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl mb-8 font-semibold">{errorMsg}</div>}
 
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-8 space-y-8">
-            <div className="bg-card p-8 border border-border rounded-2xl shadow-lg">
-              <h2 className="text-xl font-bold mb-6 text-foreground">
+            <div className="glass-panel p-8 border border-white/60 rounded-3xl shadow-xl">
+              <h2 className="text-xl font-bold mb-6 text-[var(--text-main)] tracking-wide">
                 {isEs ? 'Detalles de facturación' : 'Billing Details'}
               </h2>
               <div className="grid sm:grid-cols-2 gap-5 mb-6">
@@ -112,7 +111,7 @@ export default function CheckoutContent() {
                 <Input placeholder={isEs ? "Teléfono *" : "Phone number *"} type="tel" required value={contactInfo.phone} onChange={(e)=>setContactInfo({...contactInfo, phone:e.target.value})} className={inputClass} />
               </div>
               <div className="grid sm:grid-cols-2 gap-5">
-                <Input placeholder={isEs ? "País / Región *" : "Country / Region *"} required value={billingInfo.pais} disabled className={inputClass} />
+                <Input placeholder={isEs ? "País / Región *" : "Country / Region *"} required value={billingInfo.pais} disabled className={inputClass + " opacity-70"} />
                 <Input placeholder={isEs ? "Dirección de la calle *" : "Street address *"} required value={billingInfo.direccion} onChange={(e)=>setBillingInfo({...billingInfo, direccion:e.target.value})} className={inputClass} />
                 <Input placeholder={isEs ? "Localidad / Ciudad *" : "City / Locality *"} required value={billingInfo.localidad} onChange={(e)=>setBillingInfo({...billingInfo, localidad:e.target.value})} className={inputClass} />
                 <Input placeholder={isEs ? "Región / Estado *" : "State / Province *"} required value={billingInfo.estado} onChange={(e)=>setBillingInfo({...billingInfo, estado:e.target.value})} className={inputClass} />
@@ -120,48 +119,61 @@ export default function CheckoutContent() {
               </div>
             </div>
 
-            <div className="bg-card p-8 border border-border rounded-2xl shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-6 opacity-[0.03] pointer-events-none"><CreditCard className="w-40 h-40" /></div>
+            {/* Tarjeta de Pago Estilo Glassmorphism */}
+            <div className="glass-panel p-8 border border-white/60 rounded-3xl shadow-xl relative overflow-hidden bg-white/20">
+              <div className="absolute top-0 right-0 p-6 opacity-[0.05] pointer-events-none"><CreditCard className="w-48 h-48" /></div>
               <div className="relative z-10">
                 <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-xl font-bold flex items-center gap-3"><CreditCard className="text-primary w-5 h-5" /> {isEs ? 'Tarjeta de Crédito/Débito' : 'Credit/Debit Card'}</h2>
-                  <img src="/etomin_logo.svg" alt="Etomin" className="h-6 brightness-0 invert opacity-80" />
+                  <h2 className="text-xl font-bold flex items-center gap-3 tracking-wide">
+                    <div className="w-8 h-8 rounded-full bg-[var(--accent-purple)]/20 flex items-center justify-center">
+                      <CreditCard className="text-[var(--accent-purple)] w-4 h-4" />
+                    </div>
+                    {isEs ? 'Método de Pago Seguro' : 'Secure Payment Method'}
+                  </h2>
+                  {/* Asegúrate de que el logo de Etomin se vea bien en fondo claro (quita el invert si es blanco) */}
+                  <img src="/etomin_logo.svg" alt="Etomin" className="h-6 opacity-60 mix-blend-multiply" />
                 </div>
                 <div className="grid gap-5 max-w-md">
-                  <Input placeholder={isEs ? "Número de tarjeta *" : "Card number *"} required maxLength={19} value={cardInfo.number} onChange={(e)=>setCardInfo({...cardInfo, number: e.target.value.replace(/\D/g, '')})} className={inputClass + " font-mono tracking-widest"} />
+                  <Input placeholder={isEs ? "Número de tarjeta *" : "Card number *"} required maxLength={19} value={cardInfo.number} onChange={(e)=>setCardInfo({...cardInfo, number: e.target.value.replace(/\D/g, '')})} className={inputClass + " font-mono tracking-widest text-lg"} />
                   <Input placeholder={isEs ? "Nombre en la tarjeta *" : "Name on card *"} required value={cardInfo.name} onChange={(e)=>setCardInfo({...cardInfo, name: e.target.value.toUpperCase()})} className={inputClass} />
                   <div className="grid grid-cols-2 gap-5">
                     <Input placeholder="MM/AA *" required maxLength={5} value={cardInfo.expiry} onChange={handleExpiryChange} className={inputClass + " text-center"} />
                     <Input placeholder="CVV *" type="password" required maxLength={4} value={cardInfo.cvv} onChange={(e)=>setCardInfo({...cardInfo, cvv: e.target.value.replace(/\D/g, '')})} className={inputClass + " text-center tracking-widest"} />
                   </div>
-                  <div className="mt-4 pt-4 border-t border-border/50">
-                    <img src="/etomin_secbadge.svg" alt="Seguridad" className="h-10 opacity-90 grayscale hover:grayscale-0 transition-all" />
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-tighter mt-3 flex items-center gap-2"><ShieldCheck className="w-3 h-3 text-secondary" /> {isEs ? 'Datos protegidos y encriptados.' : 'Protected and encrypted data.'}</p>
+                  <div className="mt-4 pt-4 border-t border-[var(--text-main)]/10">
+                    <img src="/etomin_secbadge.svg" alt="Seguridad" className="h-10 opacity-70 mix-blend-multiply hover:opacity-100 transition-all" />
+                    <p className="text-[10px] text-[var(--text-main)]/50 font-bold uppercase tracking-tighter mt-3 flex items-center gap-2">
+                      <ShieldCheck className="w-3 h-3 text-[var(--accent-cyan)]" /> 
+                      {isEs ? 'Datos encriptados bajo protocolo AES-256.' : 'Data encrypted under AES-256 protocol.'}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
             
-          <div className="lg:col-span-4 bg-card p-8 border border-border rounded-2xl shadow-lg sticky top-32">
-            <h2 className="text-xl font-bold mb-6 border-b border-border pb-4">
+          <div className="lg:col-span-4 glass-panel p-8 border border-white/60 rounded-3xl shadow-xl sticky top-32">
+            <h2 className="text-xl font-bold mb-6 border-b border-[var(--text-main)]/10 pb-4 tracking-wide">
               {isEs ? 'Tu pedido' : 'Your order'}
             </h2>
             <div className="space-y-4 mb-6">
               {items.map((item: CartItem, idx: number) => (
-                <div key={idx} className="flex justify-between text-sm items-center">
-                  <span className="text-muted-foreground">{item.plans_nc?.title || (isEs ? 'Personalizado' : 'Custom')} <span className="text-foreground font-medium">x{item.quantity}</span></span>
-                  <span className="font-bold">{formatPrice((item.custom_price || item.plans_nc?.price || 0) * item.quantity)}</span>
+                <div key={idx} className="flex justify-between text-sm items-center font-medium">
+                  <span className="text-[var(--text-main)]/60">
+                    {item.plans_nc?.title || (isEs ? 'Personalizado' : 'Custom')} 
+                    <span className="text-[var(--accent-purple)] font-bold ml-2">x{item.quantity}</span>
+                  </span>
+                  <span className="font-bold text-[var(--text-main)]">{formatPrice((item.custom_price || item.plans_nc?.price || 0) * item.quantity)}</span>
                 </div>
               ))}
             </div>
-            <div className="border-t border-border pt-6 mb-8 font-sans">
-              <div className="flex justify-between items-center mb-2"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(total / 1.16)}</span></div>
-              <div className="flex justify-between items-center mb-4"><span className="text-muted-foreground">{isEs ? 'Impuesto (16%)' : 'Tax (16%)'}</span><span>{formatPrice(total - (total / 1.16))}</span></div>
-              <div className="flex justify-between items-center text-xl font-bold text-gradient mt-6"><span>{isEs ? 'Total estimado' : 'Estimated Total'}</span><span>{formatPrice(total)}</span></div>
+            <div className="border-t border-[var(--text-main)]/10 pt-6 mb-8 font-sans">
+              <div className="flex justify-between items-center mb-2 font-medium"><span className="text-[var(--text-main)]/60">Subtotal</span><span className="text-[var(--text-main)]">{formatPrice(total / 1.16)}</span></div>
+              <div className="flex justify-between items-center mb-4 font-medium"><span className="text-[var(--text-main)]/60">{isEs ? 'Impuesto (16%)' : 'Tax (16%)'}</span><span className="text-[var(--text-main)]">{formatPrice(total - (total / 1.16))}</span></div>
+              <div className="flex justify-between items-center text-xl font-bold text-gradient-pop mt-6"><span>{isEs ? 'Total estimado' : 'Estimated Total'}</span><span>{formatPrice(total)}</span></div>
             </div>
-            <Button type="submit" disabled={isProcessing} className="w-full bg-primary hover:opacity-90 text-primary-foreground font-bold h-14 rounded-lg text-lg">
-              {isProcessing ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : (isEs ? 'REALIZAR EL PAGO' : 'PROCESS PAYMENT')}
+            <Button type="submit" disabled={isProcessing} className="w-full bg-[var(--accent-dark)] hover:scale-105 text-white font-bold h-14 rounded-xl text-lg shadow-xl shadow-[var(--accent-dark)]/20 transition-all">
+              {isProcessing ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : (isEs ? 'PROCESAR PAGO' : 'PROCESS PAYMENT')}
             </Button>
           </div>
         </form>

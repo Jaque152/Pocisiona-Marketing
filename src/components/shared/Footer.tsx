@@ -5,66 +5,81 @@ import { motion } from "framer-motion";
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Globe } from 'lucide-react'; // Importamos el icono del mundo de Lucide
+import { Globe } from 'lucide-react';
 
 export function Footer() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
 
-  // Función para cambiar el idioma manteniendo la ruta actual
   const switchLocale = (newLocale: string) => {
     if (!pathname) return;
     const segments = pathname.split('/');
-    segments[1] = newLocale; // Reemplaza el segmento del idioma (ej. /es/about -> /en/about)
+    segments[1] = newLocale; 
     router.push(segments.join('/'));
   };
 
   const footerLinks = {
     services: [
-      { name: locale === 'es' ? "Agencia" : "Agency", href: `/${locale}/about` },
-      { name: locale === 'es' ? "Estrategias Base" : "Base Strategies", href: `/${locale}/services` },
-      { name: locale === 'es' ? "Planes a la medida" : "Custom Plans", href: `/${locale}/pricing` },
+      { name: locale === 'es' ? "La Agencia" : "The Agency", href: `/${locale}/about` },
+      { name: locale === 'es' ? "Catálogo" : "Catalog", href: `/${locale}/services` },
+      { name: locale === 'es' ? "Cotizador" : "Pricing", href: `/${locale}/pricing` },
+    ],
+    company: [
+      { name: locale === 'es' ? "Contacto" : "Contact", href: `/${locale}/contact` },
+      { name: locale === 'es' ? "Soporte" : "Support", href: `/${locale}/contact` },
     ],
     legal: [
       { name: locale === 'es' ? "Aviso de Privacidad" : "Privacy Policy", href: `/${locale}/legal/privacy` },
-      { name: locale === 'es' ? "Términos y Condiciones" : "Terms and Conditions", href: `/${locale}/legal/terms-conditions` },
-      { name: locale === 'es' ? "Política de Devoluciones y Reembolsos" : "Returns and Refunds Policy", href: `/${locale}/legal/cancellation` },
+      { name: locale === 'es' ? "Términos de Servicio" : "Terms of Service", href: `/${locale}/legal/terms-conditions` },
+      { name: locale === 'es' ? "Política de Cancelación" : "Cancellation Policy", href: `/${locale}/legal/cancellation` },
     ],
   };
 
   return (
-    <footer className="relative bg-[var(--navy)] border-t border-[var(--copper)]/10 font-sans">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+    <footer className="relative bg-[var(--accent-dark)] border-t border-white/10 font-sans overflow-hidden">
+      {/* Luces de fondo sutiles para el footer */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[var(--accent-purple)]/10 rounded-full blur-[100px] pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 relative z-10">
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
-            <Link href={`/${locale}`} className="inline-block mb-6">
-              <div className="relative w-16 h-16 md:w-20 md:h-20 transition-transform duration-300 hover:scale-105">
-                <Image
-                  src="/logo.png" 
-                  alt="MR Logo"
-                  fill
-                  className="object-contain"
-                />
+            <Link href={`/${locale}`} className="inline-flex items-center gap-2 mb-4 group">
+              <div className="relative w-10 h-10 transition-transform duration-300 group-hover:rotate-12">
+                <Image src="/logo.png" alt="Logo" fill className="object-contain brightness-0 invert" />
               </div>
+              <span className="font-bold text-2xl tracking-tight text-white">
+               NINJA<span className="text-[var(--accent-cyan)]">.</span>
+             </span>
             </Link>
-            <p className="text-[var(--cream)]/50 max-w-sm leading-relaxed">
+            <p className="text-white/60 max-w-sm leading-relaxed font-medium">
               {locale === 'es' 
-                ? 'Diseñando soluciones de marketing audaces que ayudan a tu marca a destacar en un mercado cada vez más competitivo.'
-                : 'Designing bold marketing solutions that help your brand stand out in an increasingly competitive market.'}
+                ? 'Diseñando sistemas de adquisición y estrategias disruptivas para dominar el mercado digital.'
+                : 'Designing acquisition systems and disruptive strategies to dominate the digital market.'}
             </p>
+            <div className="flex gap-4">
+              {["instagram", "twitter", "linkedin", "facebook"].map((social) => (
+                <a
+                  key={social}
+                  href={`#${social}`}
+                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[var(--accent-cyan)] hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <SocialIcon name={social} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Links Sections */}
           <div>
-            <h4 className="text-[var(--cream)] font-serif font-semibold mb-4 text-lg">
-              {locale === 'es' ? 'Servicios' : 'Services'}
+            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">
+              {locale === 'es' ? 'Explorar' : 'Explore'}
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {footerLinks.services.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-[var(--cream)]/50 hover:text-[var(--amber)] transition-colors">
+                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -73,11 +88,26 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[var(--cream)] font-serif font-semibold mb-4 text-lg">Legal</h4>
-            <ul className="space-y-3">
+            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">
+              {locale === 'es' ? 'Empresa' : 'Company'}
+            </h4>
+            <ul className="space-y-4">
+              {footerLinks.company.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">Legal</h4>
+            <ul className="space-y-4">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-[var(--cream)]/50 hover:text-[var(--amber)] transition-colors text-sm">
+                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors text-sm">
                     {link.name}
                   </Link>
                 </li>
@@ -87,47 +117,47 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-[var(--copper)]/10">
+        <div className="mt-16 pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             
-            <p className="text-[var(--cream)]/40 text-sm order-2 md:order-1 text-center md:text-left">
-              © {new Date().getFullYear()} Marketing Recursos {locale === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
+            <p className="text-white/40 text-sm order-2 md:order-1 font-medium text-center md:text-left">
+              © {new Date().getFullYear()} Ninja Creatives. {locale === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
             </p>
             
             {/* Controles de Idioma y Pagos */}
             <div className="flex flex-col sm:flex-row items-center gap-6 order-1 md:order-2">
               
               {/* SELECTOR DE IDIOMA */}
-              <div className="flex items-center gap-2 bg-[var(--charcoal)]/50 p-1 rounded-lg border border-[var(--copper)]/20">
-                <Globe className="w-8 h-8 text-[var(--cream)]/50 ml-2" />
+              <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-xl border border-white/10">
+                <Globe className="w-4 h-4 text-white/50 ml-2" />
                 <button
                   onClick={() => switchLocale('es')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
+                  className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
                     locale === 'es' 
-                      ? 'bg-[var(--copper)] text-white shadow-md' 
-                      : 'text-[var(--cream)]/50 hover:text-[var(--cream)]'
+                      ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-md' 
+                      : 'text-white/50 hover:text-white'
                   }`}
                 >
                   ES
                 </button>
                 <button
                   onClick={() => switchLocale('en')}
-                  className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
+                  className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
                     locale === 'en' 
-                      ? 'bg-[var(--copper)] text-white shadow-md' 
-                      : 'text-[var(--cream)]/50 hover:text-[var(--cream)]'
+                      ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-md' 
+                      : 'text-white/50 hover:text-white'
                   }`}
                 >
                   EN
                 </button>
               </div>
 
-              {/* Payment Icons */}
+              {/* Payment Icons (Mantenemos tus SVGs intactos) */}
               <div className="flex gap-2">
-                <div className="px-3 py-1.5 bg-white rounded flex items-center justify-center">
+                <div className="px-3 py-2 bg-white rounded-md flex items-center justify-center">
                    <svg className="h-4" viewBox="0 0 780 500" fill="none"><rect width="780" height="500" rx="40" fill="white"/><path fill="#1434CB" d="M293.2 348.7l33.3-190.4h53.3l-33.3 190.4h-53.3zM500.8 163c-10.5-3.9-27-8.1-47.6-8.1-52.4 0-89.3 26.4-89.6 64.2-.3 28 26.5 43.6 46.7 52.9 20.7 9.5 27.7 15.6 27.6 24.1-.1 13-16.6 19-31.9 19-21.3 0-32.6-3-50.1-10.3l-6.9-3.1-7.5 43.8c12.4 5.4 35.5 10.1 59.4 10.4 55.7 0 91.9-26.1 92.3-66.5.2-22.2-14-39.1-44.6-53-18.6-9-30-15-29.9-24.1 0-8.1 9.6-16.7 30.5-16.7 17.4-.3 30 3.5 39.8 7.5l4.8 2.3 7.2-42.4h.8zM581.8 158.3h-41c-12.7 0-22.2 3.5-27.8 16.2l-78.8 178.2h55.7l11.1-29.1h68.1l6.5 29.1H624l-42.2-194.4zm-65.6 125.2c4.4-11.2 21.3-54.4 21.3-54.4-.3.5 4.4-11.4 7.1-18.7l3.6 16.9s10.2 46.6 12.4 56.2h-44.4z"/><path fill="#1434CB" d="M239.5 158.3L187.4 289l-5.5-26.8c-9.6-30.7-39.5-64-73-80.6l47.5 166.9h56l83.2-190.2h-56.1z"/><path fill="#F7B600" d="M146.9 158.3H61.3l-.6 3.5c66.4 16 110.3 54.7 128.5 101.2l-18.5-88.8c-3.2-12.1-12.5-15.5-23.8-15.9z"/></svg>
                 </div>
-                <div className="px-3 py-1.5 bg-white rounded flex items-center justify-center">
+                <div className="px-3 py-2 bg-white rounded-md flex items-center justify-center">
                   <svg className="h-4" viewBox="0 0 152 100" fill="none"><rect width="152" height="100" rx="8" fill="white"/><circle cx="55" cy="50" r="30" fill="#EB001B"/><circle cx="97" cy="50" r="30" fill="#F79E1B"/><path d="M76 27.5C82.6 32.8 87 40.8 87 50C87 59.2 82.6 67.2 76 72.5C69.4 67.2 65 59.2 65 50C65 40.8 69.4 32.8 76 27.5Z" fill="#FF5F00"/></svg>
                 </div>
               </div>
@@ -137,7 +167,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Floating Contact Button */}
+      {/* Floating Contact Button - Pop Gradient */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -146,10 +176,10 @@ export function Footer() {
       >
         <Link 
           href={`/${locale}/contact`}
-          className="w-14 h-14 bg-gradient-to-br from-[var(--copper)] to-[var(--amber)] rounded-full flex items-center justify-center shadow-xl shadow-[var(--copper)]/30 hover:scale-110 active:scale-95 transition-transform"
+          className="w-14 h-14 bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-magenta)] rounded-full flex items-center justify-center shadow-xl shadow-[var(--accent-purple)]/40 hover:scale-110 active:scale-95 transition-transform"
         >
-          <svg className="w-6 h-6 text-[var(--navy)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
         </Link>
       </motion.div>
@@ -158,6 +188,7 @@ export function Footer() {
 }
 
 function SocialIcon({ name }: { name: string }) {
+  // SVG paths se mantienen igual
   const icons: Record<string, JSX.Element> = {
     instagram: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>),
     twitter: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>),

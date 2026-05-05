@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/hooks/use-cart";
 import { processCustomPlan, CustomPlanFormData } from "@/actions/custom-plan";
-import { Loader2, Calculator } from "lucide-react";
+import { Loader2, Calculator, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
@@ -67,17 +67,20 @@ export default function CustomPricingPage() {
     }
   };
 
-  const inputClass = "h-14 bg-input border border-border focus-visible:ring-1 focus-visible:ring-ring rounded-lg px-5 text-foreground placeholder:text-muted-foreground transition-all w-full";
+  const inputClass = "h-14 bg-white/50 backdrop-blur-sm border border-white focus-visible:ring-2 focus-visible:ring-[var(--accent-purple)] rounded-xl px-5 text-[var(--text-main)] placeholder:text-[var(--text-main)]/40 font-medium transition-all shadow-sm w-full";
 
   return (
-    <main className="min-h-screen bg-background bg-grain pt-32 pb-24 text-foreground relative">
+    <main className="min-h-screen bg-mesh pt-32 pb-24 text-[var(--text-main)] relative">
       <div className="container mx-auto px-4 max-w-2xl relative z-10">
         
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            {isEs ? 'Crea tu Estrategia' : 'Create Your Strategy'}
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-cyan)] shadow-lg mb-6">
+            <Calculator className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            {isEs ? 'Cotizador' : 'Custom Pricing'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-[var(--text-main)]/60 font-medium text-lg">
             {isEs 
               ? 'Ingresa tu folio de cotización y completa tus datos para proceder al pago.' 
               : 'Enter your quote reference and complete your details to proceed to payment.'}
@@ -85,12 +88,12 @@ export default function CustomPricingPage() {
         </div>
 
         {errorMsg && (
-          <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg mb-8">
+          <div className="bg-red-100 border border-red-300 text-red-600 p-4 rounded-xl mb-8 font-semibold">
             {errorMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-card p-8 md:p-12 border border-border rounded-2xl shadow-lg space-y-6">
+        <form onSubmit={handleSubmit} className="glass-panel p-8 md:p-12 border border-white/60 rounded-3xl shadow-2xl space-y-6">
           <div className="grid sm:grid-cols-2 gap-6">
             <Input 
               placeholder={isEs ? "Nombre *" : "First Name *"} 
@@ -122,23 +125,28 @@ export default function CustomPricingPage() {
             required 
             value={formData.id_cotizacion} 
             onChange={(e) => setFormData({...formData, id_cotizacion: e.target.value.toUpperCase()})} 
-            className={inputClass + " font-mono tracking-wider"} 
+            className={inputClass + " font-mono tracking-wider font-bold text-[var(--accent-purple)]"} 
           />
 
           <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-2">
+            <label className="block text-sm font-bold text-[var(--text-main)]/70 mb-2">
               {isEs ? 'Presupuesto Acordado (MXN) *' : 'Agreed Budget (MXN) *'}
             </label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">$</span>
+            <div className="relative flex items-center">
+              {/* Contenedor del símbolo centrado con precisión */}
+              <div className="absolute left-5 flex items-center justify-center pointer-events-none z-10">
+                <span className="text-[var(--text-main)]/50 font-bold text-xl">$</span>
+              </div>
+              
               <Input 
                 type="number" 
-                min="0"
+                min="1000"
                 step="0.01"
                 required 
                 value={formData.monto || ""} 
                 onChange={(e) => setFormData({...formData, monto: Number(e.target.value)})} 
-                className={`${inputClass} pl-8`} 
+                /* Usamos !pl-12 para forzar el espacio y text-xl para darle más peso al número */
+                className={`${inputClass} !pl-12 text-xl font-bold`} 
               />
             </div>
           </div>
@@ -146,13 +154,13 @@ export default function CustomPricingPage() {
           <Button 
             type="submit" 
             disabled={isSubmitting} 
-            className="w-full bg-gradient-to-r from-[var(--copper)] to-[var(--amber)] hover:opacity-90 text-[var(--navy)] font-bold h-14 rounded-lg text-lg mt-6"
+            className="w-full bg-[var(--accent-dark)] hover:scale-105 text-white font-bold h-14 rounded-xl text-lg mt-6 shadow-xl transition-all"
           >
             {isSubmitting ? (
               <Loader2 className="animate-spin w-5 h-5 mx-auto" />
             ) : (
               <span className="flex items-center gap-2">
-                <Calculator className="w-5 h-5"/> {isEs ? 'Añadir al Carrito' : 'Add to Cart'}
+                {isEs ? 'Añadir al Carrito' : 'Add to Cart'} <ArrowRight className="w-5 h-5 ml-1"/>
               </span>
             )}
           </Button>
@@ -161,4 +169,4 @@ export default function CustomPricingPage() {
       </div>
     </main>
   );
-}
+} 
