@@ -6,7 +6,7 @@ export interface CustomPlanFormData {
   nombre: string;
   apellidos: string;
   correo_electronico: string; 
-  id_cotizacion: string; // <-- 1. Añadimos el folio aquí
+  id_cotizacion: string; 
   monto: number;
 }
 
@@ -14,19 +14,22 @@ export async function processCustomPlan(formData: CustomPlanFormData) {
   try {
     const supabase = await createClient();
 
+    // 1. Buscamos el plan base de manera robusta (acepta cualquiera de los dos nombres)
     const { data: planData, error: planError } = await supabase
-      .from('plans_nc')
+      .from('cb_plans')
       .select('id')
-      .eq('slug', 'plan-personalizado')
+      .or('title.ilike.%Custom Garage%,title.ilike.%personalizado%')
+      .limit(1)
       .single();
 
     if (planError || !planData) {
+      console.error("[CRÍTICO] Error al buscar Plan Maestro:", planError);
       throw new Error("No se encontró la configuración del Plan Personalizado en la base de datos.");
     }
 
-    // 2. Usamos el folio que escribió el usuario directamente
+    // 2. Insertamos la cotización en la tabla recién creada
     const { error: insertError } = await supabase
-      .from('custom_plan_payments_nc')
+      .from('cb_custom_quotes')
       .insert({
         nombre: formData.nombre,
         apellidos: formData.apellidos,
@@ -37,14 +40,15 @@ export async function processCustomPlan(formData: CustomPlanFormData) {
       });
 
     if (insertError) {
-      console.error("Error al guardar cotización:", insertError);
-      throw new Error("Ocurrió un error al registrar la cotización.");
+      console.error("[CRÍTICO] Error al guardar cotización en cb_custom_quotes:", insertError);
+      throw new Error("Ocurrió un error al registrar la cotización en el servidor.");
     }
 
+    // 3. Devolvemos la información al frontend para que la agregue al carrito
     return { 
       success: true, 
       planId: planData.id, 
-      quoteId: formData.id_cotizacion, // 3. Devolvemos el mismo folio al carrito
+      quoteId: formData.id_cotizacion, 
       customPrice: formData.monto 
     };
 

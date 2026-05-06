@@ -11,8 +11,8 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   clearCart: () => void;
   total: number;
-  addToCart: (planId: number, quantity?: number, customPrice?: number | null, quoteId?: string | null) => Promise<boolean>;
-  removeFromCart: (cartItemId: number) => Promise<void>;
+  addToCart: (planId: string, quantity?: number, customPrice?: number | null, quoteId?: string | null) => Promise<boolean>;
+  removeFromCart: (cartItemId: string) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -38,8 +38,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!sessionId) return;
 
     const { data, error } = await supabase
-      .from('cart_items_nc')
-      .select('*, plans_nc(*)')
+      .from('cb_cart_items') // ACTUALIZADO
+      .select('*, cb_plans(*)') // ACTUALIZADO
       .eq('session_id', sessionId) 
       .order('created_at', { ascending: false });
     
@@ -51,19 +51,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((data as unknown as CartItem[]) || []);
   }, [supabase]);
 
-  const addToCart = useCallback(async (planId: number,quantity: number = 1, customPrice: number | null = null, quoteId: string | null = null) => {
+  const addToCart = useCallback(async (planId: string, quantity: number = 1, customPrice: number | null = null, quoteId: string | null = null) => {
     const sessionId = getSessionId();
-    const numericPlanId = Number(planId);
+    
     const { data, error } = await supabase
-      .from('cart_items_nc')
+      .from('cb_cart_items') // ACTUALIZADO
       .insert({
         session_id: sessionId,
-        plan_id: numericPlanId,
+        plan_id: planId, // YA NO SE USA NUMBER
         quantity: quantity,
         custom_price: customPrice,
         quote_id: quoteId
       })
-      .select('*, plans_nc(*)')
+      .select('*, cb_plans(*)')
       .single();
 
     if (error || !data) {
@@ -76,11 +76,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return true;
   }, [supabase]);
 
-  // --- 2. ELIMINAR DEL CARRITO ---
-  const removeFromCart = useCallback(async (cartItemId: number) => {
-    // 1. Borramos de la BD
+  const removeFromCart = useCallback(async (cartItemId: string) => {
     const { error } = await supabase
-      .from('cart_items_nc')
+      .from('cb_cart_items') // ACTUALIZADO
       .delete()
       .eq('id', cartItemId);
 
@@ -89,7 +87,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 2. Filtramos el estado local instantáneamente
     setItems((prev) => prev.filter(item => item.id !== cartItemId));
   }, [supabase]);
 
@@ -105,7 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return items.reduce((acc, item) => {
       const price = item.custom_price !== null 
         ? Number(item.custom_price) 
-        : Number(item.plans_nc?.price || 0);
+        : Number(item.cb_plans?.price || 0);
         
       return acc + (price * item.quantity);
     }, 0);

@@ -4,19 +4,16 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
-export async function addToCart(planId: number, customPrice?: number, quoteId?: string) {
+export async function addToCart(planId: string, customPrice?: number, quoteId?: string) {
   const supabase = await createClient();
   const cookieStore = await cookies();
   const sessionId = cookieStore.get('session_id')?.value;
 
   if (!sessionId) return { error: 'Sesión no válida' };
 
-  // Avisamos a la BD quién es el usuario para el RLS
-  await supabase.rpc('set_session_id', { s_id: sessionId });
-
   // Verificamos si el item ya existe en el carrito
   const { data: existingItem } = await supabase
-    .from('cart_items_nc')
+    .from('cb_cart_items') // ACTUALIZADO
     .select('id, quantity')
     .eq('plan_id', planId)
     .eq('session_id', sessionId)
@@ -25,12 +22,12 @@ export async function addToCart(planId: number, customPrice?: number, quoteId?: 
   if (existingItem && !customPrice) {
     // Si ya existe y es un plan normal, aumentamos cantidad
     await supabase
-      .from('cart_items_nc')
+      .from('cb_cart_items') // ACTUALIZADO
       .update({ quantity: existingItem.quantity + 1 })
       .eq('id', existingItem.id);
   } else {
     // Si es nuevo o es un plan personalizado, creamos registro nuevo
-    await supabase.from('cart_items_nc').insert({
+    await supabase.from('cb_cart_items').insert({ // ACTUALIZADO
       plan_id: planId,
       session_id: sessionId,
       quantity: 1,
@@ -43,19 +40,19 @@ export async function addToCart(planId: number, customPrice?: number, quoteId?: 
   return { success: true };
 }
 
-export async function removeFromCart(itemId: number) {
+export async function removeFromCart(itemId: string) {
   const supabase = await createClient();
-  const { error } = await supabase.from('cart_items_nc').delete().eq('id', itemId);
+  const { error } = await supabase.from('cb_cart_items').delete().eq('id', itemId); // ACTUALIZADO
   
   revalidatePath('/', 'layout');
   return { success: !error };
 }
 
-export async function updateQuantity(itemId: number, quantity: number) {
+export async function updateQuantity(itemId: string, quantity: number) {
   if (quantity < 1) return removeFromCart(itemId);
   
   const supabase = await createClient();
-  await supabase.from('cart_items_nc').update({ quantity }).eq('id', itemId);
+  await supabase.from('cb_cart_items').update({ quantity }).eq('id', itemId); // ACTUALIZADO
   
   revalidatePath('/', 'layout');
 }

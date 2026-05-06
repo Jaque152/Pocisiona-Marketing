@@ -15,31 +15,24 @@ function requireEnvVar(name: string): string {
 const getEtominHeaders = (extraHeaders = {}) => ({
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'User-Agent': 'Marketing Recursos/1.0',
+  'User-Agent': 'Draxen Digital Recursos/1.0',
   ...extraHeaders
 });
 
 async function safeEtominFetch(url: string, options: RequestInit, stepName: string) {
   try {
-    console.log(`📡 [Etomin] Conectando a: ${url}`);
     const res = await fetch(url, options);
     const text = await res.text();
     
-    if (!res.ok) {
-      console.warn(`⚠️ [Etomin] Código HTTP ${res.status} en ${stepName}`);
-    }
+    if (!res.ok) console.warn(`⚠️ [Etomin] Código HTTP ${res.status} en ${stepName}`);
 
     try {
       return JSON.parse(text);
     } catch (parseError) {
-      console.error(`[Etomin API Error - ${stepName}]: El servidor no devolvió JSON. HTTP Status: ${res.status}`);
-      console.error(` Snippet del HTML recibido:\n`, text.substring(0, 300));
-      
       throw new Error(`Error ${res.status}: La ruta de pago es incorrecta o está bloqueada.`);
     }
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error(`[CRÍTICO - ${stepName}]:`, msg);
     throw new Error(`Falla de red en: ${stepName}.`);
   }
 }
@@ -82,11 +75,11 @@ export async function processCheckout(formData: CheckoutPayload) {
 
     if (!tokenData.cardNumberToken) throw new Error("Tarjeta declinada o inválida.");
 
-    // 3. VENTA
+    // 3. VENTA (RETORNAMOS A LOS VALORES ORIGINALES QUE TE FUNCIONABAN)
     const salePayload = {
       amount: Number(total.toFixed(2)),
-      currency: 484,
-      reference: `NC-${Date.now()}`,
+      currency: 484, // RESTAURADO: Etomin usa estrictamente el 484 para MXN
+      reference: `DX-${Date.now()}`, 
       customerInformation: {
         firstName: contactInfo.firstName,
         lastName: contactInfo.lastName,
@@ -103,10 +96,10 @@ export async function processCheckout(formData: CheckoutPayload) {
         cvv: cardInfo.cvv
       },
       items: items.map((i: CartItem) => ({
-        title: i.plans_nc?.title || 'Estrategia Personalizada',
-        amount: i.custom_price || i.plans_nc?.price || 0,
+        title: i.cb_plans?.title || 'Estrategia Personalizada',
+        amount: Number((i.custom_price !== null ? i.custom_price : (i.cb_plans?.price || 0)).toFixed(2)),
         quantity: i.quantity,
-        id: i.plan_id.toString()
+        id: i.plan_id.toString() // RESTAURADO: Mandamos el UUID completo sin recortar
       }))
     };
 
@@ -116,16 +109,19 @@ export async function processCheckout(formData: CheckoutPayload) {
       body: JSON.stringify(salePayload)
     }, 'Procesar Venta');
 
+    // DEBUG: Ver qué dice Etomin si falla
     if (saleData.status !== 'APPROVED') {
-      throw new Error(saleData.message || "El banco declinó la transacción.");
+      console.error("\n❌ [ERROR DE ETOMIN DETALLADO]:", JSON.stringify(saleData, null, 2), "\n");
+      // Extraemos el mensaje real del banco si existe (ej. "Fondos insuficientes", "CVV erróneo")
+      const reason = saleData.message || saleData.responseCode || "Transacción declinada.";
+      throw new Error(`El banco rechazó el pago: ${reason}`);
     }
 
     // 4. GUARDAR EN BD
     const subtotalCalc = total / 1.16;
     const { data: checkoutRecord, error: dbError } = await supabaseAdmin
-      .from('checkouts_nc')
+      .from('cb_orders')
       .insert({
-        session_id: `session_${Date.now()}`, 
         nombre: contactInfo.firstName,
         apellidos: contactInfo.lastName,
         pais_region: billingInfo.pais,
@@ -135,11 +131,10 @@ export async function processCheckout(formData: CheckoutPayload) {
         codigo_postal: billingInfo.codigo_postal,
         telefono: contactInfo.phone,
         correo_electronico: contactInfo.email,
-        indicaciones_pedido: null,
         subtotal: subtotalCalc,
         impuesto: total - subtotalCalc,
         total_estimado: total,
-        payment_status: 'paid'
+        status: 'paid'
       })
       .select()
       .single();
@@ -151,15 +146,14 @@ export async function processCheckout(formData: CheckoutPayload) {
 
     // 5. GUARDAR ITEMS
     const checkoutItems = items.map((item: CartItem) => ({
-      checkout_id: checkoutRecord.id,
+      order_id: checkoutRecord.id,
       plan_id: item.plan_id,
       quantity: item.quantity,
-      unit_price: item.plans_nc?.price || 0,
       custom_price: item.custom_price,
       quote_id: item.quote_id
     }));
 
-    const { error: itemsError } = await supabaseAdmin.from('checkout_items_nc').insert(checkoutItems);
+    const { error: itemsError } = await supabaseAdmin.from('cb_order_items').insert(checkoutItems);
     if (itemsError) console.error("[CRÍTICO] Detalle del error en Items:", itemsError);
 
     // 6. ENVIAR CORREO

@@ -61,14 +61,13 @@ export default function CartPage() {
                 {items.map((item: CartItem) => {
                   const itemPrice = item.custom_price !== null 
                     ? Number(item.custom_price) 
-                    : Number(item.plans_nc?.price || 0);
-
+                    : Number(item.cb_plans?.price || 0);  
                   return (
                     <div key={item.id} className="p-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-white/30 transition-colors">
                       <div className="col-span-1 md:col-span-6">
-                        <h3 className="font-bold text-lg text-[var(--text-main)] mb-1">
-                          {item.plans_nc?.title || (isEs ? 'Estrategia Personalizada' : 'Custom Strategy')}
-                        </h3>
+                        <h3 className="...">
+                          {item.cb_plans?.title || (isEs ? 'Estrategia Personalizada' : 'Custom Strategy')}
+                        </h3> 
                         {item.quote_id && (
                           <span className="inline-block bg-[var(--accent-purple)]/10 text-[var(--accent-purple)] text-xs px-2 py-1 rounded-md font-mono font-bold mt-1">
                             Ref: {item.quote_id}

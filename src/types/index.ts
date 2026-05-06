@@ -1,39 +1,34 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }
 
 export interface Plan {
-  id: number;
+  id: string; // Cambiado a UUID (string)
   title: string;
-  slug: string;
-  category_id: number;
   price: number;
   description: string | null;
-  features: string[] | Json;
-  image_url: string | null;
+  features?: string[] | Json;
   is_active: boolean;
   created_at: string;
-  categories_nc?: Category; 
 }
 
 export interface CartItem {
-  id: number;
+  id: string; // Cambiado a UUID (string)
   session_id: string;
-  plan_id: number;
+  plan_id: string; // Cambiado a UUID (string)
   quantity: number;
   custom_price: number | null; 
   quote_id: string | null;     
-  created_at: string;
-  plans_nc?: Plan; 
+  created_at?: string;
+  cb_plans?: Plan; // Actualizado a cb_plans
 }
 
 export interface Checkout {
   id: string;
-  session_id: string;
   nombre: string;
   apellidos: string;
   pais_region: string;
@@ -43,26 +38,24 @@ export interface Checkout {
   codigo_postal: string;
   telefono: string | null;
   correo_electronico: string;
-  indicaciones_pedido: string | null;
   subtotal: number;
   impuesto: number;
   total_estimado: number;
-  payment_status: 'pending' | 'paid' | 'cancelled';
+  status: string; // Actualizado a la columna de cb_orders
   created_at: string;
 }
 
 export interface CheckoutItem {
-  id: number;
-  checkout_id: string;
-  plan_id: number;
+  id: string;
+  order_id: string; // Actualizado a order_id
+  plan_id: string;
   quantity: number;
-  unit_price: number;
   custom_price: number | null;
   quote_id: string | null;
 }
 
 export interface Contact {
-  id: number;
+  id: string;
   nombre_completo: string;
   empresa_negocio: string;
   telefono: string;

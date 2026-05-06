@@ -2,8 +2,8 @@ import { Resend } from 'resend';
 import { Checkout, CartItem } from '@/types';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = 'ventas@ninjacreatives.com'; 
-const INTERNAL_EMAIL = 'info@ninjacreatives.com';
+const FROM_EMAIL = 'ventas@draxendigital.com'; 
+const INTERNAL_EMAIL = 'info@draxendigital.com';
 
 const formatPrice = (price: number) => 
   new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(price);
@@ -29,8 +29,8 @@ export async function sendReceiptEmail(
 ) {
   // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? `System Activated - Welcome to Ninja Creatives` 
-    : `Sistema Activado - Bienvenido a Ninja Creatives`;
+    ? `System Activated - Welcome to Draxen Digital` 
+    : `Sistema Activado - Bienvenido a Draxen Digital`;
 
   const htmlClient = `
     <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
@@ -38,7 +38,7 @@ export async function sendReceiptEmail(
       <!-- Cabecera con franja de neón -->
       <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentMagenta};">
         <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          NINJA<span style="color: ${emailTheme.accentCyan};">.</span>
+          DRAXEN DIGITAL<span style="color: ${emailTheme.accentCyan};">.</span>
         </h1>
         <p style="color: ${emailTheme.accentMagenta}; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-top: 10px; font-weight: bold;">Performance Agency</p>
       </div>
@@ -62,10 +62,10 @@ export async function sendReceiptEmail(
             ${items.map(item => `
               <tr style="border-bottom: 1px solid ${emailTheme.borderDark};">
                 <td style="padding: 15px 0; color: ${emailTheme.textLight}; font-size: 14px; font-weight: 600;">
-                  ${item.plans_nc?.title || 'Custom Plan'} 
+                  ${item.cb_plans?.title || 'Custom Plan'}
                   ${item.quote_id ? `<br><span style="font-size:12px; color:${emailTheme.accentCyan}; font-family: monospace;">Ref: ${item.quote_id}</span>` : ''}
                 </td>
-                <td style="padding: 15px 0; text-align: right; color: ${emailTheme.textLight}; font-size: 14px; font-weight: bold;">${formatPrice(item.custom_price || item.plans_nc?.price || 0)}</td>
+                <td style="padding: 15px 0; text-align: right; color: ${emailTheme.textLight}; font-size: 14px; font-weight: bold;">${formatPrice(item.custom_price || item.cb_plans?.price || 0)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -82,7 +82,7 @@ export async function sendReceiptEmail(
   // --- B. PLANTILLA PARA EL EQUIPO INTERNO ---
   const htmlInternal = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff;">
-      <h2 style="color: #06b6d4; border-bottom: 2px solid #06b6d4; padding-bottom: 10px;">⚡ Nueva Venta - Ninja Creatives</h2>
+      <h2 style="color: #06b6d4; border-bottom: 2px solid #06b6d4; padding-bottom: 10px;">⚡ Nueva Venta - Draxen Digital</h2>
       <p style="color: #555;"><strong>ID Transacción:</strong> ${checkout.id}</p>
       
       <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -96,8 +96,8 @@ export async function sendReceiptEmail(
       <ul style="color: #444;">
         ${items.map(item => `
           <li style="margin-bottom: 8px;">
-            ${item.quantity}x <strong>${item.plans_nc?.title || 'Custom Plan'}</strong> 
-            - ${formatPrice(item.custom_price || item.plans_nc?.price || 0)}
+            ${item.quantity}x <strong>${item.cb_plans?.title || 'Custom Plan'}</strong> 
+            - ${formatPrice(item.custom_price || item.cb_plans?.price || 0)}
           </li>
         `).join('')}
       </ul>
@@ -112,7 +112,7 @@ export async function sendReceiptEmail(
 
   await Promise.all([
     resend.emails.send({
-      from: `Ninja Creatives <${FROM_EMAIL}>`,
+      from: `Draxen Digital <${FROM_EMAIL}>`,
       to: [checkout.correo_electronico],
       subject: subjectClient,
       html: htmlClient,
@@ -142,15 +142,15 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
   
   // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? "Signal Received - Ninja Creatives" 
-    : "Señal Recibida - Ninja Creatives";
+    ? "Signal Received - Draxen Digital" 
+    : "Señal Recibida - Draxen Digital";
   
   const htmlClient = `
     <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
       
       <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentCyan};">
         <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          NINJA<span style="color: ${emailTheme.accentMagenta};">.</span>
+          DRAXEN DIGITAL<span style="color: ${emailTheme.accentMagenta};">.</span>
         </h1>
       </div>
       
@@ -193,7 +193,7 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
 
   await Promise.all([
     resend.emails.send({
-      from: `Ninja Creatives <${FROM_EMAIL}>`,
+      from: `Draxen Digital <${FROM_EMAIL}>`,
       to: [data.correo_electronico],
       subject: subjectClient,
       html: htmlClient,

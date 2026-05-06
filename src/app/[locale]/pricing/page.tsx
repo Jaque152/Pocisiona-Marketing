@@ -140,7 +140,7 @@ export default function CustomPricingPage() {
               
               <Input 
                 type="number" 
-                min="1000"
+                min="0.o"
                 step="0.01"
                 required 
                 value={formData.monto || ""} 

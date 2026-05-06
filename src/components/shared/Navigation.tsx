@@ -50,7 +50,7 @@ export function Navigation() {
                 <Image src="/logo.png" alt="Logo" fill className="object-contain" priority />
              </div>
              <span className="font-bold text-lg hidden sm:block tracking-tight text-[var(--text-main)]">
-               NINJA<span className="text-[var(--accent-magenta)]">.</span>
+               DRAXEN DIGITAL<span className="text-[var(--accent-magenta)]">.</span>
              </span>
           </Link>
 

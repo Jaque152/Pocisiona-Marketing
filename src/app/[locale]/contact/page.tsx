@@ -127,8 +127,8 @@ export default function ContactPage() {
               {isEs ? 'Digital Mail' : 'Digital Mail'}
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium">
-              <a href="mailto:ventas@ninjacreatives.com" className="hover:text-[var(--accent-purple)] transition-colors">
-                ventas@ninjacreatives.com
+              <a href="info@draxendigital.com" className="hover:text-[var(--accent-purple)] transition-colors">
+                info@draxendigital.com
               </a>
             </p>
           </div>

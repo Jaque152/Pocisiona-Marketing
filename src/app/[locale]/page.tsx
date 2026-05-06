@@ -25,15 +25,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
               
               <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] text-[var(--text-main)] mb-8 tracking-tight">
-                <T>Hackeamos tu</T> <br />
-                <span className="text-gradient-pop"><T>crecimiento.</T></span>
+                <T>Enciende el Motor de</T> <br />
+                <span className="text-gradient-pop"><T>tu Marca.</T></span>
               </h1>
               
               <p className="text-xl md:text-2xl text-[var(--text-main)]/70 mb-12 max-w-xl leading-relaxed font-medium">
                 {isEs 
-                  ? 'No hacemos marketing tradicional. Diseñamos sistemas de adquisición implacables, creatividades que detienen el scroll y estrategias basadas en datos puros.'
-                  : 'We don\'t do traditional marketing. We design relentless acquisition systems, scroll-stopping creatives, and pure data-driven strategies.'}
+                  ? 'Entendemos la publicidad como una máquina de alto rendimiento: requiere calibración exacta, combustible innovador y una ruta definida para cruzar la meta y dominar el mercado.'
+                  : 'We understand advertising as a high-performance machine: it requires exact calibration, innovative fuel, and a defined route to cross the finish line and dominate the market.'}
               </p>
+
             </div>
 
             {/* COLUMNA DERECHA: Visuales y Globos Flotantes */}

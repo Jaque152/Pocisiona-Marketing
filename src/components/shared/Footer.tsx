@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import { motion } from "framer-motion";
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
@@ -11,6 +10,7 @@ export function Footer() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const isEs = locale === 'es';
 
   const switchLocale = (newLocale: string) => {
     if (!pathname) return;
@@ -20,84 +20,85 @@ export function Footer() {
   };
 
   const footerLinks = {
-    services: [
-      { name: locale === 'es' ? "La Agencia" : "The Agency", href: `/${locale}/about` },
-      { name: locale === 'es' ? "Catálogo" : "Catalog", href: `/${locale}/services` },
-      { name: locale === 'es' ? "Cotizador" : "Pricing", href: `/${locale}/pricing` },
+    explorar: [
+      { name: isEs ? "Punto de Partida" : "Start Line", href: `/${locale}` },
+      { name: isEs ? "Nuestra Esencia" : "Our Essence", href: `/${locale}/about` },
+      { name: isEs ? "Soluciones a Tu Medida" : "Custom Solutions", href: `/${locale}/soluciones` },
+      { name: isEs ? "Fórmulas de Éxito" : "Success Formulas", href: `/${locale}/services` },
     ],
-    company: [
-      { name: locale === 'es' ? "Contacto" : "Contact", href: `/${locale}/contact` },
-      { name: locale === 'es' ? "Soporte" : "Support", href: `/${locale}/contact` },
+    empresa: [
+      { name: isEs ? "Hablemos" : "Let's Talk", href: `/${locale}/contact` },
+      { name: isEs ? "Cotizador" : "Pricing", href: `/${locale}/pricing` },
     ],
     legal: [
-      { name: locale === 'es' ? "Aviso de Privacidad" : "Privacy Policy", href: `/${locale}/legal/privacy` },
-      { name: locale === 'es' ? "Términos de Servicio" : "Terms of Service", href: `/${locale}/legal/terms-conditions` },
-      { name: locale === 'es' ? "Política de Cancelación" : "Cancellation Policy", href: `/${locale}/legal/cancellation` },
+      { name: isEs ? "Aviso de Privacidad" : "Privacy Policy", href: `/${locale}/legal/privacy` },
+      { name: isEs ? "Términos de Servicio" : "Terms of Service", href: `/${locale}/legal/terms-conditions` },
+      { name: isEs ? "Política de Cancelación" : "Cancellation Policy", href: `/${locale}/legal/cancellation` },
     ],
   };
 
   return (
     <footer className="relative bg-[var(--accent-dark)] border-t border-white/10 font-sans overflow-hidden">
-      {/* Luces de fondo sutiles para el footer */}
+      {/* Resplandor de fondo */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[var(--accent-purple)]/10 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 relative z-10">
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-12">
-          {/* Brand Column */}
+          
+          {/* Brand Column (Logo + Texto) */}
           <div className="lg:col-span-2 space-y-6">
-            <Link href={`/${locale}`} className="inline-flex items-center gap-2 mb-4 group">
-              <div className="relative w-10 h-10 transition-transform duration-300 group-hover:rotate-12">
-                <Image src="/logo.png" alt="Logo" fill className="object-contain brightness-0 invert" />
+            <Link href={`/${locale}`} className="inline-flex items-center gap-3 mb-4 group">
+              {/* LOGO DRAXEN INTEGRADO */}
+              <div className="w-10 h-10 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
+                <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="draxen-grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#06b6d4" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
+                    </linearGradient>
+                    <linearGradient id="draxen-grad2" x1="100%" y1="100%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#d946ef" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
+                    </linearGradient>
+                    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="12" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <g filter="url(#neon-glow)">
+                    <path d="M 120 256 L 310 70 L 370 130 L 210 256 Z" fill="url(#draxen-grad1)" />
+                    <path d="M 392 256 L 202 442 L 142 382 L 302 256 Z" fill="url(#draxen-grad2)" />
+                    <polygon points="256,176 336,256 256,336 176,256" fill="#ffffff" opacity="0.95" />
+                    <polygon points="256,200 312,256 256,312 200,256" fill="#020617" opacity="0.8" />
+                  </g>
+                </svg>
               </div>
-              <span className="font-bold text-2xl tracking-tight text-white">
-               NINJA<span className="text-[var(--accent-cyan)]">.</span>
-             </span>
+              <span className="font-bold text-3xl tracking-tight text-white">
+                DRAXEN<span className="text-[var(--accent-cyan)]">.</span>
+              </span>
             </Link>
             <p className="text-white/60 max-w-sm leading-relaxed font-medium">
-              {locale === 'es' 
+              {isEs 
                 ? 'Diseñando sistemas de adquisición y estrategias disruptivas para dominar el mercado digital.'
                 : 'Designing acquisition systems and disruptive strategies to dominate the digital market.'}
             </p>
-            <div className="flex gap-4">
-              {["instagram", "twitter", "linkedin", "facebook"].map((social) => (
-                <a
-                  key={social}
-                  href={`#${social}`}
-                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[var(--accent-cyan)] hover:bg-white/10 transition-all duration-300 hover:-translate-y-1"
-                >
-                  <SocialIcon name={social} />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Links Sections */}
           <div>
-            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">
-              {locale === 'es' ? 'Explorar' : 'Explore'}
-            </h4>
+            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">{isEs ? 'Explorar' : 'Explore'}</h4>
             <ul className="space-y-4">
-              {footerLinks.services.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
+              {footerLinks.explorar.map((link) => (
+                <li key={link.name}><Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors text-sm">{link.name}</Link></li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">
-              {locale === 'es' ? 'Empresa' : 'Company'}
-            </h4>
+            <h4 className="text-white font-bold mb-6 text-lg tracking-wide">{isEs ? 'Empresa' : 'Company'}</h4>
             <ul className="space-y-4">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors">
-                    {link.name}
-                  </Link>
-                </li>
+              {footerLinks.empresa.map((link) => (
+                <li key={link.name}><Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors text-sm">{link.name}</Link></li>
               ))}
             </ul>
           </div>
@@ -106,68 +107,59 @@ export function Footer() {
             <h4 className="text-white font-bold mb-6 text-lg tracking-wide">Legal</h4>
             <ul className="space-y-4">
               {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors text-sm">
-                    {link.name}
-                  </Link>
-                </li>
+                <li key={link.name}><Link href={link.href} className="text-white/60 hover:text-[var(--accent-magenta)] font-medium transition-colors text-sm">{link.name}</Link></li>
               ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        {/* Footer Inferior */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-white/40 text-sm font-medium order-2 md:order-1 text-center md:text-left">
+            © {new Date().getFullYear()} Draxen Digital. {isEs ? 'Todos los derechos reservados.' : 'All rights reserved.'}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-6 order-1 md:order-2">
             
-            <p className="text-white/40 text-sm order-2 md:order-1 font-medium text-center md:text-left">
-              © {new Date().getFullYear()} Ninja Creatives. {locale === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
-            </p>
-            
-            {/* Controles de Idioma y Pagos */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 order-1 md:order-2">
-              
-              {/* SELECTOR DE IDIOMA */}
-              <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-xl border border-white/10">
-                <Globe className="w-4 h-4 text-white/50 ml-2" />
-                <button
-                  onClick={() => switchLocale('es')}
-                  className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
-                    locale === 'es' 
-                      ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-md' 
-                      : 'text-white/50 hover:text-white'
-                  }`}
-                >
-                  ES
-                </button>
-                <button
-                  onClick={() => switchLocale('en')}
-                  className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
-                    locale === 'en' 
-                      ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-md' 
-                      : 'text-white/50 hover:text-white'
-                  }`}
-                >
-                  EN
-                </button>
-              </div>
-
-              {/* Payment Icons (Mantenemos tus SVGs intactos) */}
-              <div className="flex gap-2">
-                <div className="px-3 py-2 bg-white rounded-md flex items-center justify-center">
-                   <svg className="h-4" viewBox="0 0 780 500" fill="none"><rect width="780" height="500" rx="40" fill="white"/><path fill="#1434CB" d="M293.2 348.7l33.3-190.4h53.3l-33.3 190.4h-53.3zM500.8 163c-10.5-3.9-27-8.1-47.6-8.1-52.4 0-89.3 26.4-89.6 64.2-.3 28 26.5 43.6 46.7 52.9 20.7 9.5 27.7 15.6 27.6 24.1-.1 13-16.6 19-31.9 19-21.3 0-32.6-3-50.1-10.3l-6.9-3.1-7.5 43.8c12.4 5.4 35.5 10.1 59.4 10.4 55.7 0 91.9-26.1 92.3-66.5.2-22.2-14-39.1-44.6-53-18.6-9-30-15-29.9-24.1 0-8.1 9.6-16.7 30.5-16.7 17.4-.3 30 3.5 39.8 7.5l4.8 2.3 7.2-42.4h.8zM581.8 158.3h-41c-12.7 0-22.2 3.5-27.8 16.2l-78.8 178.2h55.7l11.1-29.1h68.1l6.5 29.1H624l-42.2-194.4zm-65.6 125.2c4.4-11.2 21.3-54.4 21.3-54.4-.3.5 4.4-11.4 7.1-18.7l3.6 16.9s10.2 46.6 12.4 56.2h-44.4z"/><path fill="#1434CB" d="M239.5 158.3L187.4 289l-5.5-26.8c-9.6-30.7-39.5-64-73-80.6l47.5 166.9h56l83.2-190.2h-56.1z"/><path fill="#F7B600" d="M146.9 158.3H61.3l-.6 3.5c66.4 16 110.3 54.7 128.5 101.2l-18.5-88.8c-3.2-12.1-12.5-15.5-23.8-15.9z"/></svg>
-                </div>
-                <div className="px-3 py-2 bg-white rounded-md flex items-center justify-center">
-                  <svg className="h-4" viewBox="0 0 152 100" fill="none"><rect width="152" height="100" rx="8" fill="white"/><circle cx="55" cy="50" r="30" fill="#EB001B"/><circle cx="97" cy="50" r="30" fill="#F79E1B"/><path d="M76 27.5C82.6 32.8 87 40.8 87 50C87 59.2 82.6 67.2 76 72.5C69.4 67.2 65 59.2 65 50C65 40.8 69.4 32.8 76 27.5Z" fill="#FF5F00"/></svg>
-                </div>
-              </div>
+            {/* SELECTOR DE IDIOMA (AHORA CIBER-AUDAZ) */}
+            <div className="flex items-center gap-2 bg-white/5 p-1.5 rounded-xl border border-white/10">
+              <Globe className="w-5 h-5 text-white/50 ml-2" />
+              <button
+                onClick={() => switchLocale('es')}
+                className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
+                  locale === 'es' 
+                    ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-[0_0_15px_rgba(6,182,212,0.4)]' 
+                    : 'text-white/50 hover:text-white'
+                }`}
+              >
+                ES
+              </button>
+              <button
+                onClick={() => switchLocale('en')}
+                className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${
+                  locale === 'en' 
+                    ? 'bg-[var(--accent-cyan)] text-[var(--accent-dark)] shadow-[0_0_15px_rgba(6,182,212,0.4)]' 
+                    : 'text-white/50 hover:text-white'
+                }`}
+              >
+                EN
+              </button>
             </div>
 
+            {/* Payment Icons */}
+            <div className="flex gap-2">
+              <div className="px-3 py-1.5 bg-white rounded flex items-center justify-center">
+                 <svg className="h-4" viewBox="0 0 780 500" fill="none"><rect width="780" height="500" rx="40" fill="white"/><path fill="#1434CB" d="M293.2 348.7l33.3-190.4h53.3l-33.3 190.4h-53.3zM500.8 163c-10.5-3.9-27-8.1-47.6-8.1-52.4 0-89.3 26.4-89.6 64.2-.3 28 26.5 43.6 46.7 52.9 20.7 9.5 27.7 15.6 27.6 24.1-.1 13-16.6 19-31.9 19-21.3 0-32.6-3-50.1-10.3l-6.9-3.1-7.5 43.8c12.4 5.4 35.5 10.1 59.4 10.4 55.7 0 91.9-26.1 92.3-66.5.2-22.2-14-39.1-44.6-53-18.6-9-30-15-29.9-24.1 0-8.1 9.6-16.7 30.5-16.7 17.4-.3 30 3.5 39.8 7.5l4.8 2.3 7.2-42.4h.8zM581.8 158.3h-41c-12.7 0-22.2 3.5-27.8 16.2l-78.8 178.2h55.7l11.1-29.1h68.1l6.5 29.1H624l-42.2-194.4zm-65.6 125.2c4.4-11.2 21.3-54.4 21.3-54.4-.3.5 4.4-11.4 7.1-18.7l3.6 16.9s10.2 46.6 12.4 56.2h-44.4z"/><path fill="#1434CB" d="M239.5 158.3L187.4 289l-5.5-26.8c-9.6-30.7-39.5-64-73-80.6l47.5 166.9h56l83.2-190.2h-56.1z"/><path fill="#F7B600" d="M146.9 158.3H61.3l-.6 3.5c66.4 16 110.3 54.7 128.5 101.2l-18.5-88.8c-3.2-12.1-12.5-15.5-23.8-15.9z"/></svg>
+              </div>
+              <div className="px-3 py-1.5 bg-white rounded flex items-center justify-center">
+                <svg className="h-4" viewBox="0 0 152 100" fill="none"><rect width="152" height="100" rx="8" fill="white"/><circle cx="55" cy="50" r="30" fill="#EB001B"/><circle cx="97" cy="50" r="30" fill="#F79E1B"/><path d="M76 27.5C82.6 32.8 87 40.8 87 50C87 59.2 82.6 67.2 76 72.5C69.4 67.2 65 59.2 65 50C65 40.8 69.4 32.8 76 27.5Z" fill="#FF5F00"/></svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Contact Button - Pop Gradient */}
+      {/* GLOBO DE CONTACTO (AHORA NEON PÚRPURA/MAGENTA) */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -185,15 +177,4 @@ export function Footer() {
       </motion.div>
     </footer>
   );
-}
-
-function SocialIcon({ name }: { name: string }) {
-  // SVG paths se mantienen igual
-  const icons: Record<string, JSX.Element> = {
-    instagram: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>),
-    twitter: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>),
-    linkedin: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>),
-    facebook: (<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>),
-  };
-  return icons[name] || null;
 }
