@@ -1,15 +1,14 @@
-"use client";
-
-import { useLocale } from 'next-intl';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Gauge, Gem, Zap, Target, ArrowRight } from 'lucide-react';
+import { T } from "@/components/shared/T";
+import { HeroVisuals } from '@/components/home/Hero';
+import { Gauge, Gem, Zap, Target } from 'lucide-react';
+import { AddToCartButton } from './services/AddToCartButton'; 
 
-export default function HomePage() {
-  const locale = useLocale();
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const isEs = locale === 'es';
 
-  // Información de la imagen parafraseada y adaptada a la estética Draxen
+  // 1. Datos de los pilares agregados
   const pilares = [
     {
       icono: <Gauge className="w-8 h-8 text-[var(--accent-cyan)]" />,
@@ -41,61 +40,48 @@ export default function HomePage() {
       texto: isEs 
         ? "Inyectamos energía directa a tus resultados. Campañas altamente innovadoras y segmentadas para maximizar tu retorno de inversión de forma inmediata."
         : "We inject direct energy into your results. Highly innovative and segmented campaigns to maximize your ROI immediately.",
-      gradiente: "from-[var(--accent-cyan)]/20 to-transparent" // Reutilizamos cian para mantener equilibrio visual
+      gradiente: "from-[var(--accent-cyan)]/20 to-transparent"
     }
   ];
 
   return (
-    <main className="min-h-screen bg-mesh overflow-hidden relative">
+    <main className="flex flex-col min-h-screen bg-mesh overflow-hidden">
       
-      {/* ================= HERO SECTION ================= */}
-      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 px-6">
-        <div className="container mx-auto max-w-7xl relative z-10">
+      {/* HERO SECTION - Neobrutalismo Dinámico */}
+      <section className="relative min-h-screen flex items-center pt-24 pb-12">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             
-            {/* Texto del Hero */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="max-w-2xl"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-[var(--accent-cyan)]/30 mb-8">
-                <span className="text-[var(--accent-cyan)] uppercase tracking-[0.2em] text-xs font-bold">
-                  {isEs ? 'Bienvenidos a Draxen Digital' : 'Welcome to Draxen Digital'}
+            {/* COLUMNA IZQUIERDA: Copy Disruptivo */}
+            <div className="max-w-2xl relative z-20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-[var(--accent-magenta)]/30 mb-8">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-cyan)] animate-pulse" />
+                <span className="text-sm font-bold text-[var(--text-main)] tracking-wider uppercase">
+                  {isEs ? 'Agencia de Performance' : 'Performance Agency'}
                 </span>
               </div>
               
               <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] text-[var(--text-main)] mb-8 tracking-tight">
-                {isEs ? 'Enciende el Motor de' : 'Ignite the Engine of'} <br />
-                <span className="text-gradient-pop">{isEs ? 'tu Marca.' : 'your Brand.'}</span>
+                <T>Enciende el Motor de</T> <br />
+                <span className="text-gradient-pop"><T>tu Marca.</T></span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-[var(--text-main)]/70 mb-10 max-w-xl leading-relaxed font-medium">
+              <p className="text-xl md:text-2xl text-[var(--text-main)]/70 mb-12 max-w-xl leading-relaxed font-medium">
                 {isEs 
                   ? 'Entendemos la publicidad como una máquina de alto rendimiento: requiere calibración exacta, combustible innovador y una ruta definida para cruzar la meta y dominar el mercado.'
                   : 'We understand advertising as a high-performance machine: it requires exact calibration, innovative fuel, and a defined route to cross the finish line and dominate the market.'}
               </p>
-            </motion.div>
 
-            {/* Elemento visual abstracto para el Hero */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="relative hidden lg:block h-[600px]"
-            >
-              <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent-cyan)]/20 via-[var(--accent-purple)]/20 to-transparent rounded-full blur-3xl animate-pulse-slow" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 glass-panel rounded-full border-[var(--accent-cyan)]/30 flex items-center justify-center">
-                 <div className="w-64 h-64 rounded-full bg-gradient-to-br from-[var(--accent-purple)] to-[var(--accent-magenta)] opacity-20 blur-2xl" />
-                 {/* Aquí puedes colocar una imagen abstracta en 3D o el logo de Draxen si lo deseas */}
-              </div>
-            </motion.div>
+            </div>
+
+            {/* COLUMNA DERECHA: Visuales y Globos Flotantes */}
+            <HeroVisuals locale={locale} />
+
           </div>
         </div>
       </section>
 
-      {/* ================= SECCIÓN DE PILARES (LOS 4 CILINDROS) ================= */}
+      {/* SECCIÓN 4 CILINDROS */}
       <section className="relative py-24 px-6 border-t border-[var(--text-main)]/10 bg-white/20">
         <div className="container mx-auto max-w-7xl relative z-10">
           
@@ -112,13 +98,11 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pilares.map((pilar, index) => (
-              <motion.div 
+              <div 
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`glass-panel p-8 rounded-[2rem] border border-white/60 shadow-xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-300 bg-gradient-to-b ${pilar.gradiente} hover:border-[var(--accent-purple)]/40`}
+                // 3. Eliminamos motion.div y aplicamos clases de animación nativas de Tailwind CSS
+                className={`glass-panel p-8 rounded-[2rem] border border-white/60 shadow-xl relative overflow-hidden group hover:-translate-y-2 transition-all duration-300 bg-gradient-to-b ${pilar.gradiente} hover:border-[var(--accent-purple)]/40 animate-in fade-in slide-in-from-bottom-8 fill-mode-both delay-${index * 100}`}
+                style={{ animationDelay: `${index * 150}ms` }}
               >
                 {/* Ícono con contenedor Glass */}
                 <div className="w-16 h-16 rounded-2xl bg-white/60 flex items-center justify-center shadow-sm mb-6 border border-white group-hover:scale-110 transition-transform">
@@ -132,7 +116,7 @@ export default function HomePage() {
                 <p className="text-[var(--text-main)]/70 text-sm font-medium leading-relaxed">
                   {pilar.texto}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
 

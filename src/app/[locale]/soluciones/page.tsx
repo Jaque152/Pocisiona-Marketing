@@ -101,21 +101,32 @@ export default async function SolucionesPage({ params }: { params: Promise<{ loc
                 <span className="text-[var(--accent-magenta)] uppercase tracking-[0.2em] text-xs font-bold">Servicio Premium</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[var(--text-main)] tracking-tight">
-                Plan Custom Garage
+                Plan Personalizado
               </h2>
               <p className="text-lg text-[var(--text-main)]/70 font-medium leading-relaxed">
                 ¿Tu marca necesita una ingeniería que no está en el catálogo? Diseñamos soluciones pieza por pieza, adaptando cada engranaje publicitario a la medida exacta de tus objetivos y presupuesto.
               </p>
             </div>
 
-            <div className="w-full md:w-auto relative z-10">
+            <div className="w-full md:w-auto relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Botón Primario: Iniciar Cotización */}
               <Link 
-                href={`/${locale}/pricing`} 
-                className="w-full md:w-auto bg-[var(--accent-dark)] text-white px-12 py-6 rounded-2xl font-bold text-xl hover:scale-105 hover:shadow-[0_0_30px_rgba(0,0,0,0.2)] transition-all flex items-center justify-center gap-3"
+                href={`/${locale}/contact`} 
+                className="w-full sm:w-auto bg-[var(--accent-dark)] text-white px-8 md:px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] transition-all flex items-center justify-center gap-3"
               >
                 {isEs ? 'Iniciar Cotización' : 'Start Quote'}
                 <ArrowRight className="w-6 h-6" />
               </Link>
+
+              {/* Botón Secundario: Pagar Cotización */}
+              <Link 
+                href={`/${locale}/pricing`} 
+                className="w-full sm:w-auto bg-white/5 backdrop-blur-md border border-[var(--accent-cyan)] text-[var(--text-main)] px-8 md:px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[var(--accent-cyan)] hover:text-[var(--accent-dark)] hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-3"
+              >
+                {isEs ? 'Pagar Cotización' : 'Pay Quote'}
+                <ArrowRight className="w-6 h-6" />
+              </Link>
+              
             </div>
           </div>
         </div>
