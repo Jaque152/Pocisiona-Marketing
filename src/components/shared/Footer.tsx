@@ -29,7 +29,7 @@ export function Footer() {
           {/* Columna 1: Marca */}
           <div className="md:col-span-1">
             <Link href={`/${locale}`} className="text-2xl font-black tracking-tighter text-slate-900 mb-6 block">
-              Pocisiona <span className="text-indigo-600">Marketing</span>
+              Posiciona <span className="text-indigo-600">Marketing</span>
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed font-medium">
               {isEs 
@@ -80,7 +80,7 @@ export function Footer() {
 
         <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-            © {new Date().getFullYear()} Pocisiona Marketing
+            © {new Date().getFullYear()} Posiciona Marketing
           </p>
         </div>
       </div>

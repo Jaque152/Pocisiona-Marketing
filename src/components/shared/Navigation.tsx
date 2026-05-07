@@ -49,7 +49,7 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
         <Link href={`/${locale}`} className="text-2xl font-black tracking-tighter text-slate-900 group">
-          Pocisiona <span className="text-indigo-600 transition-colors group-hover:text-indigo-500"> Marketing</span>
+          Posiciona <span className="text-indigo-600 transition-colors group-hover:text-indigo-500"> Marketing</span>
         </Link>
 
         {/* NAVEGACIÓN DESKTOP */}

@@ -18,8 +18,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Pocisiona Marketing  ",
-  description: "A Pocisiona Marketing agency focused on helping businesses grow with disruptive communication, strategic events, and targeted strategies.",
+  title: "Posiciona Marketing  ",
+  description: "A Posiciona Marketing agency focused on helping businesses grow with disruptive communication, strategic events, and targeted strategies.",
   icons: {
     icon: "/favicon.ico",
   },

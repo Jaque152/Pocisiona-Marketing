@@ -29,8 +29,8 @@ export async function sendReceiptEmail(
 ) {
   // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? `System Activated - Welcome to Pocisiona Marketing` 
-    : `Sistema Activado - Bienvenido a Pocisiona Marketing`;
+    ? `System Activated - Welcome to Posiciona Marketing` 
+    : `Sistema Activado - Bienvenido a Posiciona Marketing`;
 
   const htmlClient = `
     <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
@@ -38,7 +38,7 @@ export async function sendReceiptEmail(
       <!-- Cabecera con franja de neón -->
       <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentMagenta};">
         <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          Pocisiona Marketing <span style="color: ${emailTheme.accentCyan};">.</span>
+          PosicionaMarketing <span style="color: ${emailTheme.accentCyan};">.</span>
         </h1>
         <p style="color: ${emailTheme.accentMagenta}; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-top: 10px; font-weight: bold;">Performance Agency</p>
       </div>
@@ -82,7 +82,7 @@ export async function sendReceiptEmail(
   // --- B. PLANTILLA PARA EL EQUIPO INTERNO ---
   const htmlInternal = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff;">
-      <h2 style="color: #06b6d4; border-bottom: 2px solid #06b6d4; padding-bottom: 10px;">⚡ Nueva Venta - Pocisiona Marketing</h2>
+      <h2 style="color: #06b6d4; border-bottom: 2px solid #06b6d4; padding-bottom: 10px;">⚡ Nueva Venta - Posiciona Marketing</h2>
       <p style="color: #555;"><strong>ID Transacción:</strong> ${checkout.id}</p>
       
       <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -112,7 +112,7 @@ export async function sendReceiptEmail(
 
   await Promise.all([
     resend.emails.send({
-      from: `Pocisiona Marketing <${FROM_EMAIL}>`,
+      from: `Posiciona Marketing <${FROM_EMAIL}>`,
       to: [checkout.correo_electronico],
       subject: subjectClient,
       html: htmlClient,
@@ -142,15 +142,15 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
   
   // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? "Signal Received - Pocisiona Marketing" 
-    : "Señal Recibida - Pocisiona Marketing ";
+    ? "Signal Received - Posiciona Marketing" 
+    : "Señal Recibida - Posiciona Marketing ";
   
   const htmlClient = `
     <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
       
       <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentCyan};">
         <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          Pocisiona Marketing<span style="color: ${emailTheme.accentMagenta};">.</span>
+          Posiciona Marketing<span style="color: ${emailTheme.accentMagenta};">.</span>
         </h1>
       </div>
       
@@ -193,7 +193,7 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
 
   await Promise.all([
     resend.emails.send({
-      from: `Pocisiona Marketing <${FROM_EMAIL}>`,
+      from: `Posiciona Marketing <${FROM_EMAIL}>`,
       to: [data.correo_electronico],
       subject: subjectClient,
       html: htmlClient,
