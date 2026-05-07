@@ -99,9 +99,9 @@ export default function ContactPage() {
               {isEs ? 'Sede Central' : 'Headquarters'}
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium leading-relaxed">
-              Álvaro Obregón No. 151, Ofi. 1301<br />
-              Roma Norte, Cuauhtémoc<br />
-              C.P. 06700, CDMX
+              CALLE RÍO GUADIANA NO.23 PISO 2<br />
+              COL. RENACIMIENTO, ALCALDIA CUAUHTÉMOC<br />
+              C.P. 06500 CIUDAD DE MÉXICO, CDMX
             </p>
           </div>
 
@@ -113,8 +113,8 @@ export default function ContactPage() {
               {isEs ? 'Línea Directa' : 'Direct Line'}
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium">
-              <a href="tel:+525555256732" className="hover:text-[var(--accent-purple)] transition-colors">
-                +52 55 5525 6732
+              <a href="tel:+5215557055800" className="hover:text-[var(--accent-purple)] transition-colors">
+                +52 1 55 5705 5800
               </a>
             </p>
           </div>
