@@ -64,10 +64,11 @@ export function CartDrawer() {
                 {isEs ? 'Total de Inversión' : 'Total Investment'}
               </span>
               <div className="text-right">
-                <span className="text-3xl font-bold text-gradient-pop block">{formatPrice(total)}</span>
-                <span className="text-[10px] text-[var(--text-main)]/50 font-bold uppercase tracking-tighter">
-                  {isEs ? 'IVA del 16% Incluido' : '16% VAT Included'}
-                </span>
+                  {/* Mostramos el total con IVA para que el cliente no se lleve sorpresas en el checkout */}
+                  <span className="text-3xl font-bold text-gradient-pop block">{formatPrice(total * 1.16)}</span>
+                  <span className="text-[10px] text-[var(--text-main)]/50 font-bold uppercase tracking-tighter">
+                    {isEs ? 'Subtotal + 16% de IVA' : 'Subtotal + 16% VAT'}
+                  </span>
               </div>
             </div>
             <div className="flex flex-col gap-3 mt-6">

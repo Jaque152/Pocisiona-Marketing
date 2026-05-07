@@ -170,9 +170,18 @@ export default function CheckoutContent() {
               ))}
             </div>
             <div className="border-t border-[var(--text-main)]/10 pt-6 mb-8 font-sans">
-              <div className="flex justify-between items-center mb-2 font-medium"><span className="text-[var(--text-main)]/60">Subtotal</span><span className="text-[var(--text-main)]">{formatPrice(total / 1.16)}</span></div>
-              <div className="flex justify-between items-center mb-4 font-medium"><span className="text-[var(--text-main)]/60">{isEs ? 'Impuesto (16%)' : 'Tax (16%)'}</span><span className="text-[var(--text-main)]">{formatPrice(total - (total / 1.16))}</span></div>
-              <div className="flex justify-between items-center text-xl font-bold text-gradient-pop mt-6"><span>{isEs ? 'Total estimado' : 'Estimated Total'}</span><span>{formatPrice(total)}</span></div>
+              <div className="flex justify-between items-center mb-2 font-medium">
+                <span className="text-[var(--text-main)]/60">Subtotal</span>
+                <span className="text-[var(--text-main)]">{formatPrice(total)}</span>
+              </div>
+              <div className="flex justify-between items-center mb-4 font-medium">
+                <span className="text-[var(--text-main)]/60">{isEs ? 'IVA (16%)' : 'Tax (16%)'}</span>
+                <span className="text-[var(--text-main)]">{formatPrice(total * 0.16)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xl font-bold text-gradient-pop mt-6">
+                <span>{isEs ? 'Total a Pagar' : 'Total to Pay'}</span>
+                <span>{formatPrice(total * 1.16)}</span>
+              </div>
             </div>
             <Button type="submit" disabled={isProcessing} className="w-full bg-[var(--accent-dark)] hover:scale-105 text-white font-bold h-14 rounded-xl text-lg shadow-xl shadow-[var(--accent-dark)]/20 transition-all">
               {isProcessing ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : (isEs ? 'PROCESAR PAGO' : 'PROCESS PAYMENT')}

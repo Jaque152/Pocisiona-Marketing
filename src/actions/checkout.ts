@@ -76,8 +76,11 @@ export async function processCheckout(formData: CheckoutPayload) {
     if (!tokenData.cardNumberToken) throw new Error("Tarjeta declinada o inválida.");
 
     // 3. VENTA (RETORNAMOS A LOS VALORES ORIGINALES QUE TE FUNCIONABAN)
+    const subtotalCalc = total; 
+    const impuestoCalc = subtotalCalc * 0.16;
+    const totalFinal = subtotalCalc + impuestoCalc;
     const salePayload = {
-      amount: Number(total.toFixed(2)),
+      amount: Number(totalFinal.toFixed(2)),
       currency: 484, // RESTAURADO: Etomin usa estrictamente el 484 para MXN
       reference: `DX-${Date.now()}`, 
       customerInformation: {
@@ -118,7 +121,6 @@ export async function processCheckout(formData: CheckoutPayload) {
     }
 
     // 4. GUARDAR EN BD
-    const subtotalCalc = total / 1.16;
     const { data: checkoutRecord, error: dbError } = await supabaseAdmin
       .from('cb_orders')
       .insert({
@@ -132,8 +134,8 @@ export async function processCheckout(formData: CheckoutPayload) {
         telefono: contactInfo.phone,
         correo_electronico: contactInfo.email,
         subtotal: subtotalCalc,
-        impuesto: total - subtotalCalc,
-        total_estimado: total,
+        impuesto: impuestoCalc,
+        total_estimado: totalFinal,
         status: 'paid'
       })
       .select()

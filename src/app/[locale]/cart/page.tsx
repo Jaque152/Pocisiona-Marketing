@@ -109,15 +109,15 @@ export default function CartPage() {
             <div className="space-y-4 mb-6 font-medium">
               <div className="flex justify-between items-center text-[var(--text-main)]/60">
                 <span>Subtotal</span>
-                <span className="text-[var(--text-main)] font-bold">{formatPrice(total / 1.16)}</span>
+                <span className="text-[var(--text-main)] font-bold">{formatPrice(total)}</span>
               </div>
               <div className="flex justify-between items-center text-[var(--text-main)]/60">
-                <span>{isEs ? 'Impuesto (16%)' : 'Tax (16%)'}</span>
-                <span className="text-[var(--text-main)] font-bold">{formatPrice(total - (total / 1.16))}</span>
+                <span>{isEs ? 'IVA (16%)' : 'Tax (16%)'}</span>
+                <span className="text-[var(--text-main)] font-bold">{formatPrice(total * 0.16)}</span>
               </div>
               <div className="border-t border-[var(--text-main)]/10 pt-4 mt-4 flex justify-between items-center text-xl font-bold text-gradient-pop">
-                <span>{isEs ? 'Total Estimado' : 'Estimated Total'}</span>
-                <span>{formatPrice(total)}</span>
+                <span>{isEs ? 'Total Final' : 'Final Total'}</span>
+                <span>{formatPrice(total * 1.16)}</span>
               </div>
             </div>
             

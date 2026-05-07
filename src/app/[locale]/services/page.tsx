@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { AddToCartButton } from './AddToCartButton';
+import { ArrowRight } from 'lucide-react';
 
 export default async function ServicesCatalogPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const isEs = locale === 'es';
   const supabase = await createClient();
 
   const { data: plans } = await supabase
@@ -12,9 +14,17 @@ export default async function ServicesCatalogPage({ params }: { params: Promise<
     .eq('is_active', true)
     .order('price', { ascending: true });
 
-  // 1. Separar el plan personalizado del resto
-  const standardPlans = plans?.filter(plan => !plan.title.toLowerCase().includes('personalizado')) || [];
-  const customPlan = plans?.find(plan => plan.title.toLowerCase().includes('personalizado'));
+  // SOLUCIÓN: Filtro robusto que busca la palabra "personalizado" o "custom" en el título
+  const standardPlans = plans?.filter(plan => 
+    !plan.title.toLowerCase().includes('personalizado') && 
+    !plan.title.toLowerCase().includes('custom')
+  ) || [];
+
+  // Buscamos el plan personalizado para el banner inferior
+  const customPlan = plans?.find(plan => 
+    plan.title.toLowerCase().includes('personalizado') || 
+    plan.title.toLowerCase().includes('custom')
+  );
 
   const formatPrice = (p: number) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(p);
 
@@ -34,19 +44,19 @@ export default async function ServicesCatalogPage({ params }: { params: Promise<
           </h1>
         </div>
 
-        {/* Grid de Planes Estándar (Con Hover Reveal) */}
+        {/* Grid de Planes Estándar (Con la info oculta que se revela en Hover) */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {standardPlans.map((plan) => (
             <div 
               key={plan.id} 
-              className="glass-panel rounded-3xl p-8 border border-white/50 shadow-xl flex flex-col bg-white/40 relative group h-fit transition-all duration-500 hover:shadow-2xl hover:bg-white/60 hover:-translate-y-2"
+              className="glass-panel rounded-3xl p-8 border border-white/50 shadow-xl flex flex-col bg-white/40 relative group h-fit transition-all duration-500 hover:shadow-2xl hover:bg-white/60 hover:-translate-y-2 overflow-hidden"
             >
               <div className="mb-4 relative z-10">
                 <h3 className="text-2xl font-bold tracking-tight text-[var(--text-main)] mb-2 leading-tight">
                   {plan.title}
                 </h3>
                 
-                {/* Contenedor colapsable: Se expande en hover */}
+                {/* REVELACIÓN AL PASAR EL CURSOR (Hover Reveal) */}
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100">
                   <div className="overflow-hidden">
                     <p className="text-[var(--text-main)]/70 font-medium text-[13px] leading-relaxed pt-2 pb-4">
@@ -74,7 +84,7 @@ export default async function ServicesCatalogPage({ params }: { params: Promise<
           ))}
         </div>
 
-        {/* Separación del Plan Personalizado (Banner Premium) */}
+        {/* SECCIÓN PLAN PERSONALIZADO (Separado y Premium) */}
         {customPlan && (
           <div className="mt-20 glass-panel rounded-[2.5rem] p-10 md:p-14 border border-[var(--accent-cyan)] shadow-2xl flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-white/60 to-[var(--accent-cyan)]/10 relative overflow-hidden group">
             <div className="absolute -top-20 -right-20 w-64 h-64 bg-[var(--accent-cyan)]/20 rounded-full blur-[80px] pointer-events-none transition-all duration-500 group-hover:scale-150" />
@@ -87,17 +97,29 @@ export default async function ServicesCatalogPage({ params }: { params: Promise<
                 {customPlan.title}
               </h3>
               <p className="text-[var(--text-main)]/70 font-medium text-lg leading-relaxed">
-                {customPlan.description || "Un plan diseñado pieza por pieza para tu marca, como un auto modificado a la medida de tu estilo y desempeño."}
+                {customPlan.description}
               </p>
             </div>
 
-            <div className="relative z-10 w-full md:w-auto text-center md:text-right">
-              <span className="text-[11px] text-[var(--text-main)] font-bold uppercase tracking-widest block mb-4">
-                Inversión a Medida
-              </span>
-              <Link href={`/${locale}/pricing`} className="bg-[var(--accent-dark)] text-white px-10 py-4 rounded-full text-lg font-bold hover:scale-105 shadow-xl transition-transform inline-block w-full md:w-auto">
-                Cotizar y Añadir
+            <div className="w-full md:w-auto relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Botón Primario: Iniciar Cotización */}
+              <Link 
+                href={`/${locale}/contact`} 
+                className="w-full sm:w-auto bg-[var(--accent-dark)] text-white px-8 md:px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] transition-all flex items-center justify-center gap-3"
+              >
+                {isEs ? 'Iniciar Cotización' : 'Start Quote'}
+                <ArrowRight className="w-6 h-6" />
               </Link>
+
+              {/* Botón Secundario: Pagar Cotización */}
+              <Link 
+                href={`/${locale}/pricing`} 
+                className="w-full sm:w-auto bg-white/5 backdrop-blur-md border border-[var(--accent-cyan)] text-[var(--text-main)] px-8 md:px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[var(--accent-cyan)] hover:text-[var(--accent-dark)] hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center justify-center gap-3"
+              >
+                {isEs ? 'Pagar Cotización' : 'Pay Quote'}
+                <ArrowRight className="w-6 h-6" />
+              </Link>
+              
             </div>
           </div>
         )}

@@ -89,7 +89,7 @@ INSERT INTO cb_plans (title, description, price, is_active) VALUES
 ('Análisis De Competencia Y Mercado', 'Realizamos estudios profundos de tu industria y competidores para identificar oportunidades y amenazas, permitiéndote posicionarte de manera efectiva.', 12420.00, true),
 ('Impulso Estratégico', 'Diseñamos estrategias personalizadas que alinean tus objetivos comerciales con las tendencias del mercado digital, asegurando un crecimiento sostenible.', 20140.00, true),
 -- AÑADIMOS EL PLAN CUSTOM PARA QUE EXISTA EN LA BD
-('Plan personalizado', 'Cotización a medida (El precio se calcula dinámicamente en el checkout)', 0.00, true);
+('Plan personalizado', 'Cotización a medida', 0.00, true);
 
 
 CREATE TABLE IF NOT EXISTS cb_cart_items (
