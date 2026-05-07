@@ -18,8 +18,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Draxen Digital Resultados ",
-  description: "A Draxen Digital agency focused on helping businesses grow with disruptive communication, strategic events, and targeted strategies.",
+  title: "Pocisiona Marketing  ",
+  description: "A Pocisiona Marketing agency focused on helping businesses grow with disruptive communication, strategic events, and targeted strategies.",
   icons: {
     icon: "/favicon.ico",
   },

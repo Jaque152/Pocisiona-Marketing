@@ -9,7 +9,7 @@ export default async function ServicesCatalogPage({ params }: { params: Promise<
   const supabase = await createClient();
 
   const { data: plans } = await supabase
-    .from('cb_plans')
+    .from('ar_plans')
     .select('*')
     .eq('is_active', true)
     .order('price', { ascending: true });

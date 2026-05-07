@@ -1,20 +1,19 @@
 -- =======================================================
--- 1. CREACIÓN DE TABLAS (ECOSISTEMA CLICBLAZE "cb_")
+-- 1. CREACIÓN DE TABLAS (ECOSISTEMA ACTVREACH "ar_")
 -- =======================================================
-
--- Asegurarnos de tener la extensión de UUIDs
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS cb_plans (
+CREATE TABLE IF NOT EXISTS ar_plans (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title TEXT NOT NULL,
     description TEXT,
     price NUMERIC(10, 2) NOT NULL,
+    features JSONB DEFAULT '[]'::jsonb,
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
-CREATE TABLE IF NOT EXISTS cb_orders (
+CREATE TABLE IF NOT EXISTS ar_orders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nombre TEXT NOT NULL,
     apellidos TEXT NOT NULL,
@@ -32,86 +31,26 @@ CREATE TABLE IF NOT EXISTS cb_orders (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
-CREATE TABLE IF NOT EXISTS cb_order_items (
+CREATE TABLE IF NOT EXISTS ar_order_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    order_id UUID REFERENCES cb_orders(id) ON DELETE CASCADE,
-    plan_id UUID REFERENCES cb_plans(id),
+    order_id UUID REFERENCES ar_orders(id) ON DELETE CASCADE,
+    plan_id UUID REFERENCES ar_plans(id),
     quantity INT NOT NULL,
-    custom_price NUMERIC(10, 2), -- Aquí se guardará el precio del Custom Garage
+    custom_price NUMERIC(10, 2),
     quote_id TEXT
 );
 
--- =======================================================
--- 2. HABILITAR SEGURIDAD (ROW LEVEL SECURITY - RLS)
--- =======================================================
-
-ALTER TABLE cb_plans ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cb_orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cb_order_items ENABLE ROW LEVEL SECURITY;
-
--- POLÍTICAS PARA PLANES (Cualquiera puede leer los planes activos para ver el catálogo, nadie puede alterarlos desde la web)
-CREATE POLICY "Lectura publica de planes activos" 
-ON cb_plans FOR SELECT 
-USING (is_active = true);
-
--- POLÍTICAS PARA ÓRDENES E ITEMS (El cliente puede INSERTAR su orden al pagar, pero no puede leer ni borrar órdenes de otros)
-CREATE POLICY "Permitir inserción de órdenes al pagar" 
-ON cb_orders FOR INSERT 
-WITH CHECK (true);
-
-CREATE POLICY "Permitir inserción de items de orden" 
-ON cb_order_items FOR INSERT 
-WITH CHECK (true);
-
--- (Opcional si usas el Service Role Key de Supabase en tu Server Action de Checkout, el Service Role ignora el RLS automáticamente).
-
--- =======================================================
--- 3. INSERCIÓN DEL ARSENAL (INCLUYENDO CUSTOM GARAGE)
--- =======================================================
-
-INSERT INTO cb_plans (title, description, price, is_active) VALUES
-('Fotografía Profesional', 'Realizamos sesiones fotográficas de productos y contenido corporativo para mejorar la imagen de tu marca.', 6781.00, true),
-('Gestión De E-Commerce', 'Administramos y optimizamos tu tienda en línea para mejorar la experiencia del usuario y aumentar las ventas.', 20627.00, true),
-('Desarrollo Web Y Landing Pages', 'Creamos sitios web y páginas de aterrizaje optimizadas para convertir visitantes en clientes.', 22346.00, true),
-('Análisis De Métricas Y Reportes', 'Realizamos seguimiento y análisis de tus campañas para optimizar resultados y tomar decisiones informadas.', 521.00, true),
-('Community Management', 'Administramos tus redes sociales, creando contenido relevante y gestionando la interacción con tu comunidad.', 11494.00, true),
-('Publicidad En Redes Sociales', 'Creamos y gestionamos anuncios en plataformas como Facebook, Instagram y TikTok para aumentar tu alcance y engagement.', 4023.00, true),
-('Campañas SEM (Google Ads)', 'Gestionamos campañas de anuncios en Google para atraer tráfico cualificado y generar conversiones inmediatas.', 3628.00, true),
-('Marketing De Influencers', 'Gestionamos campañas con influencers que amplifican tu mensaje y llegan a audiencias específicas de manera auténtica.', 17435.00, true),
-('SEO (Posicionamiento En Buscadores)', 'Optimizamos tu sitio web para mejorar su visibilidad en los motores de búsqueda, atrayendo tráfico orgánico cualificado.', 8652.00, true),
-('Email Marketing', 'Diseñamos y gestionamos campañas de correo electrónico que fidelizan a tus clientes y aumentan tus conversiones.', 200.00, true),
-('Redacción Publicitaria (Copywriting)', 'Elaboramos textos persuasivos que comunican tu mensaje de forma clara y atractiva, generando una respuesta del público.', 3447.00, true),
-('Producción Audiovisual', 'Creamos videos y spots publicitarios que capturan la atención y transmiten tu mensaje de manera impactante.', 36650.00, true),
-('Producción De Materiales Impresos', 'Diseñamos y producimos flyers, carteles y empaques que comunican tu mensaje de forma efectiva y profesional.', 1570.00, true),
-('Diseño De Identidad Visual', 'Creamos logotipos, paletas de colores y tipografías que representan tu marca de manera coherente y atractiva.', 25245.00, true),
-('Creación De Conceptos Creativos', 'Desarrollamos ideas innovadoras que reflejan la esencia de tu marca, creando una conexión emocional con tu audiencia.', 17820.00, true),
-('Planificación De Medios Integrada', 'Elaboramos planes de medios que combinan canales tradicionales y digitales, optimizando tu inversión publicitaria para alcanzar a tu público objetivo.', 8563.00, true),
-('Análisis De Competencia Y Mercado', 'Realizamos estudios profundos de tu industria y competidores para identificar oportunidades y amenazas, permitiéndote posicionarte de manera efectiva.', 12420.00, true),
-('Impulso Estratégico', 'Diseñamos estrategias personalizadas que alinean tus objetivos comerciales con las tendencias del mercado digital, asegurando un crecimiento sostenible.', 20140.00, true),
--- AÑADIMOS EL PLAN CUSTOM PARA QUE EXISTA EN LA BD
-('Plan personalizado', 'Cotización a medida', 0.00, true);
-
-
-CREATE TABLE IF NOT EXISTS cb_cart_items (
+CREATE TABLE IF NOT EXISTS ar_cart_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     session_id TEXT NOT NULL,
-    plan_id UUID REFERENCES cb_plans(id) ON DELETE CASCADE,
+    plan_id UUID REFERENCES ar_plans(id) ON DELETE CASCADE,
     quantity INT NOT NULL DEFAULT 1,
     custom_price NUMERIC(10, 2),
     quote_id TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- Permisos de seguridad para que el navegador pueda modificar el carrito
-ALTER TABLE cb_cart_items ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Acceso publico carrito" 
-ON cb_cart_items FOR ALL 
-USING (true) 
-WITH CHECK (true);
-
--- 1. Crear la tabla para almacenar las cotizaciones a medida (Leads)
-CREATE TABLE IF NOT EXISTS cb_custom_quotes (
+CREATE TABLE IF NOT EXISTS ar_custom_quotes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     nombre TEXT NOT NULL,
     apellidos TEXT NOT NULL,
@@ -122,10 +61,33 @@ CREATE TABLE IF NOT EXISTS cb_custom_quotes (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- 2. Habilitar la seguridad de nivel de fila (RLS)
-ALTER TABLE cb_custom_quotes ENABLE ROW LEVEL SECURITY;
+-- =======================================================
+-- 2. REGLAS DE SEGURIDAD (RLS)
+-- =======================================================
+ALTER TABLE ar_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ar_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ar_order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ar_cart_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ar_custom_quotes ENABLE ROW LEVEL SECURITY;
 
--- 3. Crear política: Permitir que el formulario web (público) inserte cotizaciones
-CREATE POLICY "Permitir insercion de cotizaciones web" 
-ON cb_custom_quotes FOR INSERT 
-WITH CHECK (true);
+CREATE POLICY "Lectura publica planes AR" ON ar_plans FOR SELECT USING (is_active = true);
+CREATE POLICY "Insertar ordenes AR" ON ar_orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Insertar items orden AR" ON ar_order_items FOR INSERT WITH CHECK (true);
+CREATE POLICY "Acceso carrito AR" ON ar_cart_items FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Insertar cotizaciones AR" ON ar_custom_quotes FOR INSERT WITH CHECK (true);
+
+-- =======================================================
+-- 3. INSERCIÓN DE LOS PROGRAMAS EXACTOS DE LAS IMÁGENES
+-- =======================================================
+INSERT INTO ar_plans (title, description, price, features) VALUES
+('Gestión de Campaña Multicanal Premium', '', 25000.00, '["Planeación y ejecución en redes, email, y Google Ads", "Producción de 2 videos cortos y gráficas", "Reporte detallado + ROI estimado"]'::jsonb),
+('Capacitación en Marketing Digital', '', 5000.00, '["Taller de 1 hora en línea", "Enfocado en redes sociales y contenido", "Material descargable incluido"]'::jsonb),
+('Estudio de Mercado Local (MiPyME)', '', 18000.00, '["2 focus groups", "Encuesta cuantitativa (hasta 100 encuestas)", "Reporte ejecutivo + presentación"]'::jsonb),
+('Encuesta Online para Clientes Actuales', '', 2200.00, '["Diseño de formulario", "Envío digital (hasta 20 contactos)", "Análisis básico de respuestas"]'::jsonb),
+('Identidad Corporativa Completa', '', 9000.00, '["Logotipo + paleta de colores + tipografía", "Diseño de tarjeta, 10 firmas de correo, papelería", "Manual básico de marca (PDF)"]'::jsonb),
+('Diseño de Logotipo Profesional', '', 3000.00, '["2 propuestas iniciales", "2 rondas de cambios", "Entrega de archivos digitales para impresión y digital"]'::jsonb),
+('Consultoría Integral PyME', '', 5300.00, '["Análisis FODA del negocio", "Propuesta de estrategia de marca", "Plan de medios y contenido", "Hasta 2 horas de asesoría ajustada a tiempos libres"]'::jsonb),
+('Diagnóstico Exprés de Estrategia Comercial', '', 1200.00, '["Revisión de canales de marketing", "Recomendaciones generales"]'::jsonb),
+('Mini Campaña Local en Medios Digitales', '', 2500.00, '["3 diseños publicitarios digitales", "1 plantilla para publicación en redes sociales", "Reporte básico de resultados"]'::jsonb),
+('Anuncios en Redes Sociales', '', 1300.00, '["1 plantilla para publicación en redes sociales", "Segmentación básica"]'::jsonb),
+('Programa Personalizado', 'Si nuestros programas actuales no se ajustan a tus necesidades, contáctanos y diseñaremos uno a tu medida.', 0.00, '["Diseño a medida de tus requerimientos", "Asignación de folio personalizado", "Cotización previa necesaria"]'::jsonb);

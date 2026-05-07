@@ -24,7 +24,7 @@ export interface CartItem {
   custom_price: number | null; 
   quote_id: string | null;     
   created_at?: string;
-  cb_plans?: Plan; // Actualizado a cb_plans
+  ar_plans?: Plan; // Actualizado a ar_plans
 }
 
 export interface Checkout {
@@ -41,7 +41,7 @@ export interface Checkout {
   subtotal: number;
   impuesto: number;
   total_estimado: number;
-  status: string; // Actualizado a la columna de cb_orders
+  status: string; // Actualizado a la columna de ar_orders
   created_at: string;
 }
 

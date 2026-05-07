@@ -160,11 +160,11 @@ export default function CheckoutContent() {
               {items.map((item: CartItem, idx: number) => (
                 <div key={idx} className="flex justify-between text-sm items-center font-medium">
                   <span className="text-[var(--text-main)]/60">
-                    {item.cb_plans?.title || (isEs ? 'Personalizado' : 'Custom')}
+                    {item.ar_plans?.title || (isEs ? 'Personalizado' : 'Custom')}
                     <span className="text-[var(--accent-purple)] font-bold ml-2">x{item.quantity}</span>
                   </span>
                   <span className="font-bold text-[var(--text-main)]">
-                    {formatPrice((item.custom_price || item.cb_plans?.price || 0) * item.quantity)}
+                    {formatPrice((item.custom_price || item.ar_plans?.price || 0) * item.quantity)}
                   </span>
                 </div>
               ))}

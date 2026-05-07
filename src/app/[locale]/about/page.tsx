@@ -32,7 +32,7 @@ export default function About() {
             </span>
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--text-main)] max-w-3xl leading-[1.1] tracking-tight">
-            Draxen Digital.{" "}
+            Pocisiona Marketing Digital.{" "}
             <span className="text-gradient-pop block mt-2">
               {isEs ? 'Elevando el Potencial de tu Negocio.' : 'Elevating Your Business Potential.'}
             </span>

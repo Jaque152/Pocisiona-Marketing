@@ -12,19 +12,19 @@ function requireEnvVar(name: string): string {
   return value;
 }
 
-const getEtominHeaders = (extraHeaders = {}) => ({
+const getOctanoHeaders = (extraHeaders = {}) => ({
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'User-Agent': 'Draxen Digital Recursos/1.0',
+  'User-Agent': 'ActvReach/1.0',
   ...extraHeaders
 });
 
-async function safeEtominFetch(url: string, options: RequestInit, stepName: string) {
+async function safeOctanoFetch(url: string, options: RequestInit, stepName: string) {
   try {
     const res = await fetch(url, options);
     const text = await res.text();
     
-    if (!res.ok) console.warn(`⚠️ [Etomin] Código HTTP ${res.status} en ${stepName}`);
+    if (!res.ok) console.warn(`⚠️ [Octano] Código HTTP ${res.status} en ${stepName}`);
 
     try {
       return JSON.parse(text);
@@ -46,23 +46,23 @@ export async function processCheckout(formData: CheckoutPayload) {
       requireEnvVar('SUPABASE_SERVICE_ROLE_KEY')
     );
 
-    const ETOMIN_BASE_URL = requireEnvVar('ETOMIN_BASE_URL');
-    const ETOMIN_EMAIL = requireEnvVar('ETOMIN_EMAIL');
-    const ETOMIN_PASSWORD = requireEnvVar('ETOMIN_PASSWORD');
+    const OCTANO_BASE_URL = requireEnvVar('OCTANO_BASE_URL');
+    const OCTANO_EMAIL = requireEnvVar('OCTANO_EMAIL');
+    const OCTANO_PASSWORD = requireEnvVar('OCTANO_PASSWORD');
 
     // 1. LOGIN
-    const signinData = await safeEtominFetch(`${ETOMIN_BASE_URL}/signin`, {
+    const signinData = await safeOctanoFetch(`${OCTANO_BASE_URL}/signin`, {
       method: 'POST',
-      headers: getEtominHeaders(),
-      body: JSON.stringify({ email: ETOMIN_EMAIL, password: ETOMIN_PASSWORD })
-    }, 'Login Etomin');
+      headers: getOctanoHeaders(),
+      body: JSON.stringify({ email: OCTANO_EMAIL, password: OCTANO_PASSWORD })
+    }, 'Login Octano');
 
     if (!signinData.authToken) throw new Error("Credenciales del procesador rechazadas.");
     
     // 2. TOKENIZAR
-    const tokenData = await safeEtominFetch(`${ETOMIN_BASE_URL}/card/tokenizer`, {
+    const tokenData = await safeOctanoFetch(`${OCTANO_BASE_URL}/card/tokenizer`, {
       method: 'POST',
-      headers: getEtominHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
+      headers: getOctanoHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
       body: JSON.stringify({
         cardData: {
           cardNumber: cardInfo.number,
@@ -75,14 +75,15 @@ export async function processCheckout(formData: CheckoutPayload) {
 
     if (!tokenData.cardNumberToken) throw new Error("Tarjeta declinada o inválida.");
 
-    // 3. VENTA (RETORNAMOS A LOS VALORES ORIGINALES QUE TE FUNCIONABAN)
+    // 3. VENTA (Cálculo de impuestos incluido)
     const subtotalCalc = total; 
     const impuestoCalc = subtotalCalc * 0.16;
     const totalFinal = subtotalCalc + impuestoCalc;
+
     const salePayload = {
       amount: Number(totalFinal.toFixed(2)),
-      currency: 484, // RESTAURADO: Etomin usa estrictamente el 484 para MXN
-      reference: `DX-${Date.now()}`, 
+      currency: 484, // Código ISO numérico para MXN
+      reference: `AR-${Date.now()}`, // Prefijo ActvReach
       customerInformation: {
         firstName: contactInfo.firstName,
         lastName: contactInfo.lastName,
@@ -99,30 +100,29 @@ export async function processCheckout(formData: CheckoutPayload) {
         cvv: cardInfo.cvv
       },
       items: items.map((i: CartItem) => ({
-        title: i.cb_plans?.title || 'Estrategia Personalizada',
-        amount: Number((i.custom_price !== null ? i.custom_price : (i.cb_plans?.price || 0)).toFixed(2)),
+        title: i.ar_plans?.title || 'Estrategia Personalizada',
+        amount: Number((i.custom_price !== null ? i.custom_price : (i.ar_plans?.price || 0)).toFixed(2)),
         quantity: i.quantity,
-        id: i.plan_id.toString() // RESTAURADO: Mandamos el UUID completo sin recortar
+        id: i.plan_id.toString() 
       }))
     };
 
-    const saleData = await safeEtominFetch(`${ETOMIN_BASE_URL}/sale`, {
+    const saleData = await safeOctanoFetch(`${OCTANO_BASE_URL}/sale`, {
       method: 'POST',
-      headers: getEtominHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
+      headers: getOctanoHeaders({ 'Authorization': `Bearer ${signinData.authToken}` }),
       body: JSON.stringify(salePayload)
     }, 'Procesar Venta');
 
-    // DEBUG: Ver qué dice Etomin si falla
+    // DEBUG: Ver qué dice Octano si falla
     if (saleData.status !== 'APPROVED') {
-      console.error("\n❌ [ERROR DE ETOMIN DETALLADO]:", JSON.stringify(saleData, null, 2), "\n");
-      // Extraemos el mensaje real del banco si existe (ej. "Fondos insuficientes", "CVV erróneo")
+      console.error("\n❌ [ERROR DE OCTANO DETALLADO]:", JSON.stringify(saleData, null, 2), "\n");
       const reason = saleData.message || saleData.responseCode || "Transacción declinada.";
       throw new Error(`El banco rechazó el pago: ${reason}`);
     }
 
-    // 4. GUARDAR EN BD
+    // 4. GUARDAR EN BD (Tablas de ActvReach)
     const { data: checkoutRecord, error: dbError } = await supabaseAdmin
-      .from('cb_orders')
+      .from('ar_orders')
       .insert({
         nombre: contactInfo.firstName,
         apellidos: contactInfo.lastName,
@@ -155,7 +155,7 @@ export async function processCheckout(formData: CheckoutPayload) {
       quote_id: item.quote_id
     }));
 
-    const { error: itemsError } = await supabaseAdmin.from('cb_order_items').insert(checkoutItems);
+    const { error: itemsError } = await supabaseAdmin.from('ar_order_items').insert(checkoutItems);
     if (itemsError) console.error("[CRÍTICO] Detalle del error en Items:", itemsError);
 
     // 6. ENVIAR CORREO

@@ -99,9 +99,9 @@ export default function ContactPage() {
               {isEs ? 'Sede Central' : 'Headquarters'}
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium leading-relaxed">
-              CALLE RÍO GUADIANA NO.23 PISO 2<br />
-              COL. RENACIMIENTO, ALCALDIA CUAUHTÉMOC<br />
-              C.P. 06500 CIUDAD DE MÉXICO, CDMX
+              Avenida Insurgentes Sur, N°933, Int 102 Piso 1<br />
+              Colonia Nápoles, Alcaldía Benito Juárez<br />
+              C.P. 03810, CDMX
             </p>
           </div>
 
@@ -114,7 +114,7 @@ export default function ContactPage() {
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium">
               <a href="tel:+5215557055800" className="hover:text-[var(--accent-purple)] transition-colors">
-                +52 1 55 5705 5800
+                +52 1 55 9136 2019
               </a>
             </p>
           </div>
@@ -127,8 +127,8 @@ export default function ContactPage() {
               {isEs ? 'Digital Mail' : 'Digital Mail'}
             </h3>
             <p className="text-[var(--text-main)]/60 text-sm font-medium">
-              <a href="info@draxendigital.com" className="hover:text-[var(--accent-purple)] transition-colors">
-                info@draxendigital.com
+              <a href="contacto@posicionamkt.com" className="hover:text-[var(--accent-purple)] transition-colors">
+                contacto@posicionamkt.com
               </a>
             </p>
           </div>

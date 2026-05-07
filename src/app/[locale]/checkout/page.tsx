@@ -131,7 +131,7 @@ export default function CheckoutContent() {
                     {isEs ? 'Método de Pago Seguro' : 'Secure Payment Method'}
                   </h2>
                   {/* Asegúrate de que el logo de Etomin se vea bien en fondo claro (quita el invert si es blanco) */}
-                  <img src="/etomin_logo.svg" alt="Etomin" className="h-6 opacity-60 mix-blend-multiply" />
+                  <img src="/logo-octano-2.png" alt="Octano" className="h-6 opacity-60 mix-blend-multiply" />
                 </div>
                 <div className="grid gap-5 max-w-md">
                   <Input placeholder={isEs ? "Número de tarjeta *" : "Card number *"} required maxLength={19} value={cardInfo.number} onChange={(e)=>setCardInfo({...cardInfo, number: e.target.value.replace(/\D/g, '')})} className={inputClass + " font-mono tracking-widest text-lg"} />
@@ -160,11 +160,11 @@ export default function CheckoutContent() {
               {items.map((item: CartItem, idx: number) => (
                 <div key={idx} className="flex justify-between text-sm items-center font-medium">
                   <span className="text-[var(--text-main)]/60">
-                    {item.cb_plans?.title || (isEs ? 'Personalizado' : 'Custom')}
+                    {item.ar_plans?.title || (isEs ? 'Personalizado' : 'Custom')}
                     <span className="text-[var(--accent-purple)] font-bold ml-2">x{item.quantity}</span>
                   </span>
                   <span className="font-bold text-[var(--text-main)]">
-                    {formatPrice((item.custom_price || item.cb_plans?.price || 0) * item.quantity)}
+                    {formatPrice((item.custom_price || item.ar_plans?.price || 0) * item.quantity)}
                   </span>
                 </div>
               ))}
