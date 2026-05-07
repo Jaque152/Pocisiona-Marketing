@@ -16,8 +16,8 @@ export function Footer() {
     ],
     legal: [
       { name: isEs ? "Aviso de Privacidad" : "Privacy Policy", href: `/${locale}/legal/privacy` },
-      { name: isEs ? "Términos de Servicio" : "Terms of Service", href: `/${locale}/legal/terms-conditions` },
-      { name: isEs ? "Política de Reembolsos" : "Refund Policy", href: `/${locale}/legal/cancellation` },
+      { name: isEs ? "Términos y condiciones" : "Terms and conditions", href: `/${locale}/legal/terms-conditions` },
+      { name: isEs ? "Política de devoluciones y reembolsos" : "Refund Policy", href: `/${locale}/legal/cancellation` },
     ]
   };
 
@@ -82,10 +82,6 @@ export function Footer() {
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
             © {new Date().getFullYear()} Pocisiona Marketing
           </p>
-          <div className="flex gap-6">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">LinkedIn</span>
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">Twitter</span>
-          </div>
         </div>
       </div>
     </footer>

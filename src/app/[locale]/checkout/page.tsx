@@ -130,7 +130,6 @@ export default function CheckoutContent() {
                     </div>
                     {isEs ? 'Método de Pago Seguro' : 'Secure Payment Method'}
                   </h2>
-                  {/* Asegúrate de que el logo de Etomin se vea bien en fondo claro (quita el invert si es blanco) */}
                   <img src="/logo-octano-2.png" alt="Octano" className="h-6 opacity-60 mix-blend-multiply" />
                 </div>
                 <div className="grid gap-5 max-w-md">
