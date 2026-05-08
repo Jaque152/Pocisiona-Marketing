@@ -97,8 +97,8 @@ export function Navigation() {
                 {link.name}
               </Link>
             ))}
-            <Link href={`/${locale}/#contacto`} onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
-              <PhoneCall className="w-5 h-5" /> {isEs ? 'Contacto' : 'Contact'}
+            <Link href={`/${locale}/contact`} onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-2">
+              <PhoneCall className="w-5 h-5" /> {isEs ? 'Hablemos' : 'Let\'s Talk'}
             </Link>
           </div>
         </div>
