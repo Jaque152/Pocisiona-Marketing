@@ -2,21 +2,22 @@ import { Resend } from 'resend';
 import { Checkout, CartItem } from '@/types';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = 'ventas@posicionamkt.com'; 
+
+
+const FROM_EMAIL = 'soporte@posicionamkt.com'; 
 const INTERNAL_EMAIL = 'contacto@posicionamkt.com';
 
 const formatPrice = (price: number) => 
   new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(price);
 
-// Paleta Ciber-Audaz adaptada para clientes de correo
 const emailTheme = {
-  bgDark: '#020617', // Slate 950
-  cardDark: '#0f172a', // Slate 900
-  accentCyan: '#06b6d4',
-  accentMagenta: '#d946ef',
-  textLight: '#f8fafc',
-  textMuted: '#94a3b8',
-  borderDark: '#1e293b'
+  bgMain: '#fafafa',       
+  cardBg: '#ffffff',       
+  primary: '#4f46e5',      
+  textMain: '#0f172a',     
+  textMuted: '#64748b',    
+  borderLight: '#e2e8f0',  
+  surface: '#f8fafc'       
 };
 
 // ============================================================================
@@ -27,53 +28,57 @@ export async function sendReceiptEmail(
   items: CartItem[], 
   isEnglish: boolean = false
 ) {
-  // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
+  // --- A. PLANTILLA CORPORATIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? `System Activated - Welcome to Posiciona Marketing` 
-    : `Sistema Activado - Bienvenido a Posiciona Marketing`;
+    ? `Order Confirmation - Welcome to Posiciona Marketing` 
+    : `Confirmación de Orden - Bienvenido a Posiciona Marketing`;
 
   const htmlClient = `
-    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
+    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; background-color: ${emailTheme.bgMain}; padding: 40px 20px;">
       
-      <!-- Cabecera con franja de neón -->
-      <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentMagenta};">
-        <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          PosicionaMarketing <span style="color: ${emailTheme.accentCyan};">.</span>
-        </h1>
-        <p style="color: ${emailTheme.accentMagenta}; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-top: 10px; font-weight: bold;">Performance Agency</p>
-      </div>
-
-      <div style="padding: 40px 30px;">
-        <h2 style="color: ${emailTheme.textLight}; margin-top: 0; font-size: 20px; font-weight: 700;">${isEnglish ? 'Hello' : 'Hola'} ${checkout.nombre},</h2>
-        <p style="font-size: 15px; color: ${emailTheme.textMuted}; line-height: 1.6;">
-          ${isEnglish 
-            ? 'Your payment was successfully processed. Your growth system is now in the development phase.' 
-            : 'Tu pago fue procesado con éxito. Tu sistema de crecimiento ha entrado en fase de desarrollo.'}
-        </p>
+      <div style="background-color: ${emailTheme.cardBg}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderLight}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
         
-        <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-          <thead>
-            <tr style="border-bottom: 1px solid ${emailTheme.borderDark}; text-align: left;">
-              <th style="padding: 12px 0; color: ${emailTheme.textMuted}; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">${isEnglish ? 'Service' : 'Servicio'}</th>
-              <th style="padding: 12px 0; color: ${emailTheme.textMuted}; font-size: 11px; text-transform: uppercase; text-align: right; letter-spacing: 1px;">${isEnglish ? 'Investment' : 'Inversión'}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${items.map(item => `
-              <tr style="border-bottom: 1px solid ${emailTheme.borderDark};">
-                <td style="padding: 15px 0; color: ${emailTheme.textLight}; font-size: 14px; font-weight: 600;">
-                  ${item.ar_plans?.title || 'Custom Plan'}
-                  ${item.quote_id ? `<br><span style="font-size:12px; color:${emailTheme.accentCyan}; font-family: monospace;">Ref: ${item.quote_id}</span>` : ''}
-                </td>
-                <td style="padding: 15px 0; text-align: right; color: ${emailTheme.textLight}; font-size: 14px; font-weight: bold;">${formatPrice(item.custom_price || item.ar_plans?.price || 0)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+        <div style="padding: 40px 30px; text-align: center; border-bottom: 1px solid ${emailTheme.borderLight};">
+          <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; color: ${emailTheme.textMain};">
+            ACTV<span style="color: ${emailTheme.primary};">REACH</span>
+          </h1>
+          <p style="color: ${emailTheme.primary}; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; font-weight: bold;">
+            ${isEnglish ? 'Corporate Transformation' : 'Transformación Corporativa'}
+          </p>
+        </div>
 
-        <div style="background-color: ${emailTheme.cardDark}; border-radius: 12px; padding: 25px; text-align: right; border-left: 4px solid ${emailTheme.accentCyan};">
-          <span style="font-size: 11px; color: ${emailTheme.textMuted}; text-transform: uppercase; letter-spacing: 1px;">Total (IVA Incluido)</span>
-          <span style="font-size: 28px; font-weight: 800; color: ${emailTheme.accentMagenta}; display: block; margin-top: 5px;">${formatPrice(checkout.total_estimado)}</span>
+        <div style="padding: 40px 30px;">
+          <h2 style="color: ${emailTheme.textMain}; margin-top: 0; font-size: 20px; font-weight: 700;">${isEnglish ? 'Hello' : 'Hola'} ${checkout.nombre},</h2>
+          <p style="font-size: 15px; color: ${emailTheme.textMuted}; line-height: 1.6;">
+            ${isEnglish 
+              ? 'Your payment was successfully processed. Our team of consultants is preparing everything to start your project.' 
+              : 'Tu pago fue procesado con éxito. Nuestro equipo de consultores está preparando todo para dar inicio a tu proyecto.'}
+          </p>
+          
+          <table style="width: 100%; border-collapse: collapse; margin: 30px 0;">
+            <thead>
+              <tr style="border-bottom: 2px solid ${emailTheme.borderLight}; text-align: left;">
+                <th style="padding: 12px 0; color: ${emailTheme.textMuted}; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">${isEnglish ? 'Service / Program' : 'Servicio / Programa'}</th>
+                <th style="padding: 12px 0; color: ${emailTheme.textMuted}; font-size: 11px; text-transform: uppercase; text-align: right; letter-spacing: 1px;">${isEnglish ? 'Investment' : 'Inversión'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr style="border-bottom: 1px solid ${emailTheme.borderLight};">
+                  <td style="padding: 15px 0; color: ${emailTheme.textMain}; font-size: 14px; font-weight: 600;">
+                    ${item.ar_plans?.title || 'Programa Personalizado'}
+                    ${item.quote_id ? `<br><span style="font-size:12px; color:${emailTheme.textMuted}; font-weight: normal;">Folio: ${item.quote_id}</span>` : ''}
+                  </td>
+                  <td style="padding: 15px 0; text-align: right; color: ${emailTheme.textMain}; font-size: 14px; font-weight: bold;">${formatPrice(item.custom_price || item.ar_plans?.price || 0)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div style="background-color: ${emailTheme.surface}; border-radius: 12px; padding: 25px; text-align: right; border-left: 4px solid ${emailTheme.primary}; border: 1px solid ${emailTheme.borderLight}; border-left-width: 4px;">
+            <span style="font-size: 11px; color: ${emailTheme.textMuted}; text-transform: uppercase; letter-spacing: 1px;">${isEnglish ? 'Total (VAT Included)' : 'Total (IVA Incluido)'}</span>
+            <span style="font-size: 28px; font-weight: 800; color: ${emailTheme.primary}; display: block; margin-top: 5px;">${formatPrice(checkout.total_estimado)}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -81,31 +86,31 @@ export async function sendReceiptEmail(
 
   // --- B. PLANTILLA PARA EL EQUIPO INTERNO ---
   const htmlInternal = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff;">
-      <h2 style="color: #06b6d4; border-bottom: 2px solid #06b6d4; padding-bottom: 10px;">⚡ Nueva Venta - Posiciona Marketing</h2>
-      <p style="color: #555;"><strong>ID Transacción:</strong> ${checkout.id}</p>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;">
+      <h2 style="color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 10px;">💳 Nueva Compra Aprobada - Posiciona Marketing</h2>
+      <p style="color: #64748b;"><strong>ID Transacción:</strong> ${checkout.id}</p>
       
       <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        <tr><td colspan="2" style="background: #f4f6f8; padding: 10px; font-weight: bold; color: #333;">Datos del Cliente</td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; width: 30%;"><strong>Nombre:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${checkout.nombre} ${checkout.apellidos}</td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${checkout.correo_electronico}">${checkout.correo_electronico}</a></td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Teléfono:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${checkout.telefono || 'No proporcionado'}</td></tr>
+        <tr><td colspan="2" style="background: #f8fafc; padding: 10px; font-weight: bold; color: #0f172a; border-radius: 6px 6px 0 0;">Datos del Cliente</td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; width: 30%; color: #64748b;"><strong>Nombre:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${checkout.nombre} ${checkout.apellidos}</td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Email:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:${checkout.correo_electronico}" style="color: #4f46e5;">${checkout.correo_electronico}</a></td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Teléfono:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${checkout.telefono || 'No proporcionado'}</td></tr>
       </table>
 
-      <h3 style="margin-top: 25px; color: #333;">Detalle del Arsenal Adquirido</h3>
-      <ul style="color: #444;">
+      <h3 style="margin-top: 25px; color: #0f172a;">Programas Contratados</h3>
+      <ul style="color: #0f172a; padding-left: 20px;">
         ${items.map(item => `
           <li style="margin-bottom: 8px;">
-            ${item.quantity}x <strong>${item.ar_plans?.title || 'Custom Plan'}</strong> 
+            ${item.quantity}x <strong>${item.ar_plans?.title || 'Programa Personalizado'}</strong> 
             - ${formatPrice(item.custom_price || item.ar_plans?.price || 0)}
           </li>
         `).join('')}
       </ul>
       
-      <div style="margin-top: 20px; padding: 15px; background: #0f172a; color: white; border-radius: 6px; text-align: right;">
-        <p style="margin: 5px 0; color: #94a3b8;">Subtotal: ${formatPrice(checkout.subtotal)}</p>
-        <p style="margin: 5px 0; color: #94a3b8;">Impuestos: ${formatPrice(checkout.impuesto)}</p>
-        <p style="margin: 10px 0 0 0; font-size: 18px; color: #d946ef;"><strong>TOTAL COBRADO: ${formatPrice(checkout.total_estimado)}</strong></p>
+      <div style="margin-top: 20px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-align: right;">
+        <p style="margin: 5px 0; color: #64748b; font-size: 14px;">Subtotal: ${formatPrice(checkout.subtotal)}</p>
+        <p style="margin: 5px 0; color: #64748b; font-size: 14px;">Impuestos: ${formatPrice(checkout.impuesto)}</p>
+        <p style="margin: 10px 0 0 0; font-size: 20px; color: #4f46e5;"><strong>TOTAL COBRADO: ${formatPrice(checkout.total_estimado)}</strong></p>
       </div>
     </div>
   `;
@@ -118,9 +123,9 @@ export async function sendReceiptEmail(
       html: htmlClient,
     }),
     resend.emails.send({
-      from: `Sales Bot <${FROM_EMAIL}>`,
+      from: `Notificaciones <${FROM_EMAIL}>`,
       to: [INTERNAL_EMAIL],
-      subject: `[VENTA] ${checkout.nombre} ${checkout.apellidos} - ${formatPrice(checkout.total_estimado)}`,
+      subject: `[NUEVA COMPRA] ${checkout.nombre} ${checkout.apellidos} - ${formatPrice(checkout.total_estimado)}`,
       html: htmlInternal,
     })
   ]);
@@ -140,33 +145,36 @@ export interface ContactFormData {
 
 export async function sendContactConfirmationEmail(data: ContactFormData, isEnglish: boolean = false) {
   
-  // --- A. PLANTILLA DISRUPTIVA PARA EL CLIENTE ---
+  // --- A. PLANTILLA CORPORATIVA PARA EL CLIENTE ---
   const subjectClient = isEnglish 
-    ? "Signal Received - Posiciona Marketing" 
-    : "Señal Recibida - Posiciona Marketing ";
+    ? "We have received your message - Posiciona Marketing" 
+    : "Hemos recibido tu mensaje - Posiciona Marketing";
   
   const htmlClient = `
-    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; color: ${emailTheme.textLight}; background-color: ${emailTheme.bgDark}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderDark};">
+    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; background-color: ${emailTheme.bgMain}; padding: 40px 20px;">
       
-      <div style="background-color: ${emailTheme.cardDark}; padding: 40px 30px; text-align: center; border-bottom: 3px solid ${emailTheme.accentCyan};">
-        <h1 style="color: ${emailTheme.textLight}; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px;">
-          Posiciona Marketing<span style="color: ${emailTheme.accentMagenta};">.</span>
-        </h1>
-      </div>
-      
-      <div style="padding: 40px 30px;">
-        <h2 style="color: ${emailTheme.textLight}; margin-top: 0; font-size: 20px; font-weight: 700;">
-          ${isEnglish ? `Hi ${data.nombre_completo},` : `Hola ${data.nombre_completo},`}
-        </h2>
-        <p style="font-size: 15px; color: ${emailTheme.textMuted}; line-height: 1.6;">
-          ${isEnglish 
-            ? 'We have received your data. Our performance team is reviewing your case and will contact you shortly to start hacking your growth.' 
-            : 'Hemos interceptado tus datos correctamente. Nuestro equipo de performance está revisando tu caso y te contactará en breve.'}
-        </p>
+      <div style="background-color: ${emailTheme.cardBg}; border-radius: 16px; overflow: hidden; border: 1px solid ${emailTheme.borderLight}; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        
+        <div style="padding: 40px 30px; text-align: center; border-bottom: 1px solid ${emailTheme.borderLight};">
+          <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; color: ${emailTheme.textMain};">
+            ACTV<span style="color: ${emailTheme.primary};">REACH</span>
+          </h1>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+          <h2 style="color: ${emailTheme.textMain}; margin-top: 0; font-size: 20px; font-weight: 700;">
+            ${isEnglish ? `Hi ${data.nombre_completo},` : `Hola ${data.nombre_completo},`}
+          </h2>
+          <p style="font-size: 15px; color: ${emailTheme.textMuted}; line-height: 1.6;">
+            ${isEnglish 
+              ? 'We have received your request. Our team of consultants is reviewing your information and will contact you shortly to discuss how we can help your business grow.' 
+              : 'Hemos recibido tu solicitud correctamente. Nuestro equipo de consultores está analizando tu información y te contactará a la brevedad para trazar el mejor plan para tu empresa.'}
+          </p>
 
-        <div style="background-color: ${emailTheme.cardDark}; border-radius: 12px; padding: 25px; margin-top: 30px; border-left: 4px solid ${emailTheme.accentMagenta};">
-          <p style="font-size: 14px; color: ${emailTheme.textMuted}; margin: 5px 0;"><strong>${isEnglish ? 'Subject:' : 'Asunto:'}</strong> ${data.asunto}</p>
-          <p style="font-size: 14px; color: ${emailTheme.textMuted}; margin: 5px 0;"><strong>${isEnglish ? 'Company:' : 'Empresa:'}</strong> ${data.empresa_negocio}</p>
+          <div style="background-color: ${emailTheme.surface}; border-radius: 12px; padding: 25px; margin-top: 30px; border: 1px solid ${emailTheme.borderLight}; border-left-width: 4px; border-left-color: ${emailTheme.primary};">
+            <p style="font-size: 14px; color: ${emailTheme.textMain}; margin: 5px 0;"><strong>${isEnglish ? 'Subject:' : 'Asunto:'}</strong> ${data.asunto}</p>
+            <p style="font-size: 14px; color: ${emailTheme.textMain}; margin: 5px 0;"><strong>${isEnglish ? 'Company:' : 'Empresa:'}</strong> ${data.empresa_negocio}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -174,19 +182,19 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
 
   // --- B. PLANTILLA PARA EL EQUIPO INTERNO ---
   const htmlInternal = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #ffffff;">
-      <h2 style="color: #d946ef; border-bottom: 2px solid #d946ef; padding-bottom: 10px;">🎯 Nuevo Lead de Contacto</h2>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;">
+      <h2 style="color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 10px;">📋 Nuevo Lead de Contacto - Posiciona Marketing</h2>
       
       <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; width: 30%; color: #555;"><strong>Nombre:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${data.nombre_completo}</td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #555;"><strong>Empresa:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${data.empresa_negocio}</td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #555;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="mailto:${data.correo_electronico}">${data.correo_electronico}</a></td></tr>
-        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #555;"><strong>Teléfono:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${data.telefono}</td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; width: 30%; color: #64748b;"><strong>Nombre:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${data.nombre_completo}</td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Empresa:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${data.empresa_negocio}</td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Email:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><a href="mailto:${data.correo_electronico}" style="color: #4f46e5;">${data.correo_electronico}</a></td></tr>
+        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #64748b;"><strong>Teléfono:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${data.telefono}</td></tr>
       </table>
 
       <div style="margin-top: 25px;">
-        <h3 style="color: #333; margin-bottom: 10px;">Mensaje Original:</h3>
-        <div style="white-space: pre-wrap; color: #333; background: #f4f6f8; padding: 15px; border-left: 4px solid #d946ef; border-radius: 4px; font-size: 14px; line-height: 1.6;">${data.mensaje}</div>
+        <h3 style="color: #0f172a; margin-bottom: 10px;">Mensaje Original:</h3>
+        <div style="white-space: pre-wrap; color: #333; background: #f8fafc; padding: 20px; border: 1px solid #e2e8f0; border-left: 4px solid #4f46e5; border-radius: 6px; font-size: 14px; line-height: 1.6;">${data.mensaje}</div>
       </div>
     </div>
   `;
@@ -199,7 +207,7 @@ export async function sendContactConfirmationEmail(data: ContactFormData, isEngl
       html: htmlClient,
     }),
     resend.emails.send({
-      from: `Web Bot <${FROM_EMAIL}>`,
+      from: `Notificaciones <${FROM_EMAIL}>`,
       to: [INTERNAL_EMAIL],
       subject: `[LEAD] ${data.asunto} - ${data.empresa_negocio}`,
       html: htmlInternal,

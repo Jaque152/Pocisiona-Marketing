@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
-import { Mail, MapPin, Globe } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   const locale = useLocale();
@@ -62,7 +62,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Columna 4: Contacto (Basado en Docs) */}
+          {/* Columna 4: Contacto  */}
           <div>
             <h4 className="font-bold text-slate-900 mb-6 uppercase tracking-widest text-xs">{isEs ? "Contacto" : "Contact"}</h4>
             <ul className="space-y-4 text-sm text-slate-500 font-medium">
@@ -73,6 +73,11 @@ export function Footer() {
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-indigo-600 shrink-0" />
                 <span>contacto@posicionamkt.com</span>
+              </li>
+              {/* Teléfono añadido */}
+              <li className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-indigo-600 shrink-0" />
+                <span>+52 1 55 9136 2019</span>
               </li>
             </ul>
           </div>

@@ -34,39 +34,77 @@ export default function HomePage() {
   const customPlan = plans.find(p => p.title.toLowerCase().includes('personalizado'));
   const formatPrice = (p: number) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(p);
 
-  // TEXTOS DEL HERO: INTERACTIVOS
+  // TEXTOS DEL HERO: INTERACTIVOS (PARAFRASEADOS)
   const highlights = [
-    { label: isEs ? "Estrategia" : "Strategy", title: isEs ? "Planificación de Alto Nivel" : "High-Level Planning", desc: isEs ? "Diseñamos la hoja de ruta que conecta tus recursos con metas ambiciosas de mercado." : "We design the roadmap that connects your resources with ambitious market goals." },
-    { label: isEs ? "Cumplimiento" : "Compliance", title: isEs ? "Blindaje Operativo" : "Operational Shielding", desc: isEs ? "Garantizamos que cada paso de tu empresa cumpla con el marco legal e institucional vigente." : "We guarantee that every step of your company complies with the current legal framework." },
-    { label: isEs ? "Mercado" : "Market", title: isEs ? "Inteligencia de Datos" : "Data Intelligence", desc: isEs ? "Transformamos la incertidumbre en decisiones inteligentes mediante investigación profunda." : "We transform uncertainty into intelligent decisions through deep research." }
+    { 
+      label: isEs ? "Estrategia" : "Strategy", 
+      title: isEs ? "Planificación de Alto Nivel" : "High-Level Planning", 
+      desc: isEs 
+        ? "Trazamos el camino ideal para alinear tus capacidades internas con objetivos de mercado desafiantes." 
+        : "We trace the ideal path to align your internal capabilities with challenging market objectives." 
+    },
+    { 
+      label: isEs ? "Cumplimiento" : "Compliance", 
+      title: isEs ? "Blindaje Operativo" : "Operational Shielding", 
+      desc: isEs 
+        ? "Aseguramos que la operación diaria de tu negocio esté completamente respaldada por los lineamientos legales e institucionales vigentes." 
+        : "We ensure that your business's daily operations are fully supported by current legal and institutional guidelines." 
+    },
+    { 
+      label: isEs ? "Mercado" : "Market", 
+      title: isEs ? "Inteligencia de Datos" : "Data Intelligence", 
+      desc: isEs 
+        ? "Disipamos la incertidumbre comercial transformando investigaciones exhaustivas en decisiones tácticas precisas." 
+        : "We dispel commercial uncertainty by transforming exhaustive research into precise tactical decisions." 
+    }
   ];
 
-  // ACORDEÓN DE SERVICIOS
+  // ACORDEÓN DE SERVICIOS (PARAFRASEADOS)
   const services = [
     {
       title: isEs ? "Marketing estratégico" : "Strategic Marketing",
-      short: isEs ? "Conviértete en la marca que lidera tu mercado conectando tus objetivos con tu audiencia." : "Become the brand that leads your market connecting goals with your audience.",
-      detail: isEs ? "El Marketing Estratégico no se trata solo de acciones aisladas, sino de un plan integral que conecta tus objetivos de negocio con las necesidades de tu audiencia. Nuestro enfoque combina análisis profundo, visión innovadora y creatividad, para diseñar estrategias que impulsan el crecimiento sostenible de tu marca.\n\nCada decisión, cada campaña y cada comunicación están pensadas para generar impacto medible, fortalecer tu posicionamiento y crear relaciones duraderas con tus clientes." : "Strategic Marketing is an integral plan connecting business goals with audience needs. We combine deep analysis, innovation, and creativity to design strategies driving sustainable growth.\n\nEvery decision is aimed at generating measurable impact and building lasting relationships."
+      short: isEs 
+        ? "Posiciona a tu empresa como líder del sector al vincular tus metas comerciales con lo que tu público realmente busca." 
+        : "Position your company as an industry leader by linking your business goals with what your audience truly seeks.",
+      detail: isEs 
+        ? "Desarrollamos planes globales que fusionan la creatividad, la visión a futuro y el análisis riguroso para fomentar un avance constante.\n\nCada paso que damos busca cimentar vínculos a largo plazo y mejorar tu presencia en el mercado con resultados cuantificables." 
+        : "We develop global plans merging creativity, future vision, and rigorous analysis to foster constant progress.\n\nEvery step we take aims to build long-term relationships and improve your market presence with quantifiable results."
     },
     {
       title: isEs ? "Publicidad y medios" : "Advertising & Media",
-      short: isEs ? "Impulsa tu marca y amplifica tu presencia para construir conexiones duraderas." : "Boost your brand and amplify presence to build lasting connections.",
-      detail: isEs ? "En un mundo donde la atención es el recurso más valioso, tu marca necesita destacar con fuerza y claridad. Nuestro enfoque en Publicidad y Medios está diseñado para amplificar tu presencia, generar impacto y construir conexiones duraderas con tu público.\n\nTransformamos la manera en que tu marca se comunica, posicionándote como un referente en tu industria y maximizando tu alcance en cada canal." : "In a world where attention is valuable, your brand must stand out. Our approach amplifies your presence, generating impact and building connections.\n\nWe transform how your brand communicates, positioning you as an industry benchmark."
+      short: isEs 
+        ? "Fortalece el alcance de tu empresa y forja relaciones sólidas con tu público objetivo." 
+        : "Strengthen your company's reach and forge solid relationships with your target audience.",
+      detail: isEs 
+        ? "En una era altamente competitiva por captar la atención, te ayudamos a sobresalir mediante enfoques publicitarios que maximizan tu visibilidad en diversos canales.\n\nEvolucionamos la forma en que transmites tu mensaje para que te conviertas en una autoridad indiscutible dentro de tu industria." 
+        : "In an era highly competitive for attention, we help you stand out through advertising approaches that maximize your visibility across various channels.\n\nWe evolve the way you transmit your message so you become an indisputable authority within your industry."
     },
     {
       title: isEs ? "Investigación de mercados" : "Market Research",
-      short: isEs ? "Descubre oportunidades y toma decisiones inteligentes basadas en datos reales." : "Discover opportunities and make smart decisions based on real data.",
-      detail: isEs ? "La investigación de mercados es la base para decisiones estratégicas. Analizamos tendencias, comportamientos y necesidades de tu audiencia para ofrecerte información clara, precisa y accionable.\n\nCon datos confiables y análisis profundo, tu empresa puede diseñar estrategias efectivas, optimizar recursos y alcanzar resultados sostenibles." : "Market research is the foundation for strategic decisions. We analyze trends and behaviors to offer clear, actionable information.\n\nWith reliable data, your company can design effective strategies and achieve sustainable results."
+      short: isEs 
+        ? "Halla nuevas vías de crecimiento y fundamenta tus elecciones corporativas en información verídica y actual." 
+        : "Find new growth paths and base your corporate choices on truthful and current information.",
+      detail: isEs 
+        ? "Estudiamos el comportamiento y las exigencias de tu mercado meta para brindarte datos estructurados, claros y útiles.\n\nEste respaldo analítico te permitirá trazar caminos más eficientes, aprovechar mejor tu inversión y lograr un éxito duradero." 
+        : "We study the behavior and demands of your target market to provide structured, clear, and useful data.\n\nThis analytical backing will allow you to chart more efficient paths, better leverage your investment, and achieve lasting success."
     },
     {
       title: isEs ? "Asesoría en Cumplimiento" : "Compliance Consulting",
-      short: isEs ? "Opera con transparencia, evita multas y protege la reputación de tu empresa." : "Operate transparently, avoid fines, and protect your company's reputation.",
-      detail: isEs ? "En un entorno empresarial cada vez más regulado, cumplir con la normativa vigente protege la reputación de la empresa. Ofrecemos un servicio integral de asesoría en cumplimiento legal y administrativo, abarcando las áreas fiscal, laboral y comercial.\n\nRealizamos auditorías preventivas y capacitamos a tu equipo. Nuestro objetivo es que operes con total transparencia y seguridad." : "In a regulated environment, complying with regulations protects reputation. We offer comprehensive legal and administrative compliance consulting.\n\nWe conduct audits and train your team. Our goal is for you to operate with total transparency and security."
+      short: isEs 
+        ? "Salvaguarda el prestigio de tu organización operando bajo el marco de la ley y previniendo cualquier tipo de sanción." 
+        : "Safeguard your organization's prestige by operating within the legal framework and preventing any type of sanction.",
+      detail: isEs 
+        ? "Brindamos consultoría completa en materia laboral, comercial y fiscal para asegurar tu alineación normativa.\n\nA través de la preparación técnica de tu personal y la ejecución de auditorías preventivas, garantizamos que tu negocio funcione con total claridad y seguridad jurídica." 
+        : "We provide complete consulting in labor, commercial, and tax matters to ensure your regulatory alignment.\n\nThrough the technical preparation of your staff and the execution of preventive audits, we guarantee that your business operates with total clarity and legal security."
     },
     {
       title: isEs ? "Diseño y branding" : "Design & Branding",
-      short: isEs ? "Diseña la identidad que tu marca merece. Coherencia y confianza visual." : "Design the identity your brand deserves. Visual coherence and trust.",
-      detail: isEs ? "El diseño y el branding son la esencia de cómo tu marca se percibe. Creamos identidades sólidas, coherentes y memorables que reflejan la personalidad de tu empresa.\n\nDesde la conceptualización hasta la implementación, cada elemento visual trabaja para contar tu historia. Con un branding fuerte, tu marca se reconoce y se convierte en referente." : "Design and branding are the essence of perception. We create solid, memorable identities reflecting your company's personality.\n\nFrom concept to implementation, every visual element tells your story. With strong branding, your brand becomes a benchmark."
+      short: isEs 
+        ? "Construye una imagen visual que transmita seguridad y sea completamente congruente con el valor de tu empresa." 
+        : "Build a visual image that conveys security and is completely consistent with your company's value.",
+      detail: isEs 
+        ? "Moldeamos identidades únicas que proyectan fielmente el carácter de tu negocio, cuidando desde la conceptualización hasta su aplicación gráfica.\n\nUna gestión de marca sólida es clave para que tu historia resuene, seas fácilmente identificable y te erijas como un modelo a seguir en el mercado." 
+        : "We shape unique identities that faithfully project the character of your business, taking care from conceptualization to graphic application.\n\nSolid brand management is key for your story to resonate, be easily identifiable, and stand as a benchmark in the market."
     }
   ];
 
@@ -95,8 +133,8 @@ export default function HomePage() {
           </h1>
           <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl">
             {isEs 
-              ? 'No ofrecemos soluciones genéricas. Nos sumergimos en la realidad de tu negocio para entender tus objetivos, proponer tácticas a medida y convertirlas en resultados tangibles.' 
-              : 'We do not offer generic solutions. We dive into your business reality to understand objectives, propose custom tactics, and turn them into tangible results.'}
+              ? 'Fusionamos la planeación estratégica con la implementación práctica. Evitamos las fórmulas prefabricadas; en su lugar, analizamos a fondo el contexto de tu empresa para comprender tus metas, diseñar acciones personalizadas y lograr un impacto real y medible.' 
+              : 'We merge strategic planning with practical implementation. We avoid pre-made formulas; instead, we deeply analyze your company\'s context to understand your goals, design custom actions, and achieve real, measurable impact.'}
           </p>
           
           {/* Hero Quick-Reveal */}

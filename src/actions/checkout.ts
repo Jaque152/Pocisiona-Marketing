@@ -15,7 +15,7 @@ function requireEnvVar(name: string): string {
 const getOctanoHeaders = (extraHeaders = {}) => ({
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'User-Agent': 'ActvReach/1.0',
+  'User-Agent': 'Posiciona Marketing/1.0',
   ...extraHeaders
 });
 
@@ -83,7 +83,7 @@ export async function processCheckout(formData: CheckoutPayload) {
     const salePayload = {
       amount: Number(totalFinal.toFixed(2)),
       currency: 484, // Código ISO numérico para MXN
-      reference: `AR-${Date.now()}`, // Prefijo ActvReach
+      reference: `PM-${Date.now()}`, // Prefijo Posiciona Marketing
       customerInformation: {
         firstName: contactInfo.firstName,
         lastName: contactInfo.lastName,
@@ -120,7 +120,7 @@ export async function processCheckout(formData: CheckoutPayload) {
       throw new Error(`El banco rechazó el pago: ${reason}`);
     }
 
-    // 4. GUARDAR EN BD (Tablas de ActvReach)
+    // 4. GUARDAR EN BD
     const { data: checkoutRecord, error: dbError } = await supabaseAdmin
       .from('ar_orders')
       .insert({
